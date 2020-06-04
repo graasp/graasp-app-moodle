@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import SaveIcon from '@material-ui/icons/Save';
+import CancelIcon from '@material-ui/icons/Cancel';
 import Modal from '@material-ui/core/Modal';
 import Switch from '@material-ui/core/Switch';
 import { connect } from 'react-redux';
@@ -79,6 +84,45 @@ class Settings extends Component {
     dispatchCloseSettings();
   };
 
+  isSaveDisabled = () => {
+    return false;
+  };
+
+  handleSave = () => {
+    console.log('Saves');
+  };
+
+  // Create a simple text input field and assign id, label and value
+  createInputField = (textLabel, id, textProp) => {
+    return <TextField fullWidth id={id} label={textLabel} value={textProp} />;
+  };
+
+  // Renders the save and cancel button
+  renderButtons() {
+    const { t } = this.props;
+
+    const saveDisabled = this.isSaveDisabled();
+
+    return (
+      <>
+        <Tooltip title={t('Save')} key="save">
+          <IconButton
+            size="small"
+            onClick={this.handleSave}
+            disabled={saveDisabled}
+          >
+            <SaveIcon color="secondary" opacity={saveDisabled ? 0.5 : 1} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={t('Cancel')} key="cancel">
+          <IconButton size="small" onClick={this.handleClose}>
+            <CancelIcon />
+          </IconButton>
+        </Tooltip>
+      </>
+    );
+  }
+
   renderModalContent() {
     const { t, settings, activity } = this.props;
     const { headerVisible } = settings;
@@ -96,11 +140,34 @@ class Settings extends Component {
       />
     );
 
+    // TODO: move this later to state
+    const moodleApiUrl = 'localhost/moodle/anEndpointOfferingAPI';
+    const moodleUsername = 'myMoodleUsername';
+    const moodlePassword = 'myMoodlePassword'; // Attention: if stored like that it's in clear in the redux state.
+
     return (
-      <FormControlLabel
-        control={switchControl}
-        label={t('Show Header to Students')}
-      />
+      <>
+        <FormControlLabel
+          control={switchControl}
+          label={t('Show Header to Students')}
+        />
+        {this.createInputField(
+          'Moodle Endpoint (t.b.d.)',
+          'moodle-api-url',
+          moodleApiUrl,
+        )}
+        {this.createInputField(
+          'Moodle Username',
+          'moodle-username',
+          moodleUsername,
+        )}
+        {this.createInputField(
+          'Moodle Password',
+          'moodle-password',
+          moodlePassword,
+        )}
+        {this.renderButtons()}
+      </>
     );
   }
 
