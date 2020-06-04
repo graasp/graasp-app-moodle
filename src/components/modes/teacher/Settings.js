@@ -37,9 +37,22 @@ const styles = theme => ({
   button: {
     margin: theme.spacing(),
   },
+  textField: {
+    marginTop: theme.spacing(3),
+  },
 });
 
 class Settings extends Component {
+  state = (() => {
+    const { settings } = this.props;
+    const { moodleApiEndpoint, moodleUsername, moodlePassword } = settings;
+    return {
+      moodleApiEndpoint,
+      moodleUsername,
+      moodlePassword,
+    };
+  })();
+
   static propTypes = {
     classes: PropTypes.shape({
       paper: PropTypes.string,
@@ -48,7 +61,9 @@ class Settings extends Component {
     activity: PropTypes.bool.isRequired,
     settings: PropTypes.shape({
       headerVisible: PropTypes.bool.isRequired,
-      studentsOnly: PropTypes.bool.isRequired,
+      moodleApiEndpoint: PropTypes.string,
+      moodleUsername: PropTypes.string,
+      moodlePassword: PropTypes.string,
     }).isRequired,
     t: PropTypes.func.isRequired,
     dispatchCloseSettings: PropTypes.func.isRequired,
@@ -90,11 +105,23 @@ class Settings extends Component {
 
   handleSave = () => {
     console.log('Saves');
+    const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
+    const settingsToChange = {
+      moodleApiEndpoint: moodleApiEndpoint,
+      moodleUsername: moodleUsername,
+      moodlePassword: moodlePassword,
+    };
+    this.saveSettings(settingsToChange);
   };
 
-  // Create a simple text input field and assign id, label and value
-  createInputField = (textLabel, id, textProp) => {
-    return <TextField fullWidth id={id} label={textLabel} value={textProp} />;
+  handleMoodleApiChange = event => {
+    this.setState({ moodleApiEndpoint: event.target.value });
+  };
+  handleMoodleUsernameChange = event => {
+    this.setState({ moodleUsername: event.target.value });
+  };
+  handleMoodlePasswordChange = event => {
+    this.setState({ moodlePassword: event.target.value });
   };
 
   // Renders the save and cancel button
@@ -124,8 +151,10 @@ class Settings extends Component {
   }
 
   renderModalContent() {
-    const { t, settings, activity } = this.props;
+    const { t, settings, activity, classes } = this.props;
     const { headerVisible } = settings;
+
+    const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
 
     if (activity) {
       return <Loader />;
@@ -140,32 +169,40 @@ class Settings extends Component {
       />
     );
 
-    // TODO: move this later to state
-    const moodleApiUrl = 'localhost/moodle/anEndpointOfferingAPI';
-    const moodleUsername = 'myMoodleUsername';
-    const moodlePassword = 'myMoodlePassword'; // Attention: if stored like that it's in clear in the redux state.
-
     return (
       <>
         <FormControlLabel
           control={switchControl}
           label={t('Show Header to Students')}
         />
-        {this.createInputField(
-          'Moodle Endpoint (t.b.d.)',
-          'moodle-api-url',
-          moodleApiUrl,
-        )}
-        {this.createInputField(
-          'Moodle Username',
-          'moodle-username',
-          moodleUsername,
-        )}
-        {this.createInputField(
-          'Moodle Password',
-          'moodle-password',
-          moodlePassword,
-        )}
+
+        <TextField
+          id="moodleApiEndpoint"
+          label={t('Moodle Endpoint (t.b.d.)')}
+          value={moodleApiEndpoint}
+          onChange={this.handleMoodleApiChange}
+          className={classes.textField}
+          fullWidth
+        />
+
+        <TextField
+          id="moodleUsername"
+          label={t('Moodle Username')}
+          value={moodleUsername}
+          onChange={this.handleMoodleUsernameChange}
+          className={classes.textField}
+          fullWidth
+        />
+
+        <TextField
+          id="moodlePassword"
+          label={t('Moodle Password')}
+          value={moodlePassword}
+          onChange={this.handleMoodlePasswordChange}
+          className={classes.textField}
+          fullWidth
+        />
+
         {this.renderButtons()}
       </>
     );

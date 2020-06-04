@@ -11,6 +11,9 @@ import { showErrorToast } from '../utils/toasts';
 
 const DEFAULT_SETTINGS = {
   headerVisible: false,
+  moodleApiEndpoint: 'https://yourMoodleInstanc.com/api',
+  moodleUsername: '',
+  moodlePassword: '', // Attention: if stored like that it's in clear in the redux state.
 };
 
 const INITIAL_STATE = {
