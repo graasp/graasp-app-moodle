@@ -56,6 +56,7 @@ class Settings extends Component {
   static propTypes = {
     classes: PropTypes.shape({
       paper: PropTypes.string,
+      textField: PropTypes.string,
     }).isRequired,
     open: PropTypes.bool.isRequired,
     activity: PropTypes.bool.isRequired,
@@ -107,9 +108,9 @@ class Settings extends Component {
     console.log('Saves');
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
     const settingsToChange = {
-      moodleApiEndpoint: moodleApiEndpoint,
-      moodleUsername: moodleUsername,
-      moodlePassword: moodlePassword,
+      moodleApiEndpoint,
+      moodleUsername,
+      moodlePassword,
     };
     this.saveSettings(settingsToChange);
   };
@@ -117,9 +118,11 @@ class Settings extends Component {
   handleMoodleApiChange = event => {
     this.setState({ moodleApiEndpoint: event.target.value });
   };
+
   handleMoodleUsernameChange = event => {
     this.setState({ moodleUsername: event.target.value });
   };
+
   handleMoodlePasswordChange = event => {
     this.setState({ moodlePassword: event.target.value });
   };
