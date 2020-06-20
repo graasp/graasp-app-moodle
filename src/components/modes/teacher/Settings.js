@@ -6,6 +6,10 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Modal from '@material-ui/core/Modal';
@@ -36,10 +40,15 @@ const styles = theme => ({
     outline: 'none',
   },
   button: {
-    margin: theme.spacing(),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   textField: {
     marginTop: theme.spacing(3),
+  },
+  formControl: {
+    marginTop: theme.spacing(1),
+    width: '100%',
   },
 });
 
@@ -47,10 +56,19 @@ class Settings extends Component {
   state = (() => {
     const { settings } = this.props;
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = settings;
+
+    const moodleApiToken = '';
+    const moodleAvailableCourses = [];
+    const moodleSelectedCourse = '';
+    const connectionEstablished = false;
     return {
       moodleApiEndpoint,
       moodleUsername,
       moodlePassword,
+      moodleAvailableCourses,
+      moodleSelectedCourse,
+      connectionEstablished,
+      moodleApiToken,
     };
   })();
 
@@ -58,6 +76,8 @@ class Settings extends Component {
     classes: PropTypes.shape({
       paper: PropTypes.string,
       textField: PropTypes.string,
+      formControl: PropTypes.string,
+      button: PropTypes.string,
     }).isRequired,
     open: PropTypes.bool.isRequired,
     activity: PropTypes.bool.isRequired,
@@ -73,6 +93,7 @@ class Settings extends Component {
     i18n: PropTypes.shape({
       defaultNS: PropTypes.string,
     }).isRequired,
+    onImportData: PropTypes.func.isRequired,
   };
 
   saveSettings = settingsToChange => {
@@ -106,7 +127,6 @@ class Settings extends Component {
   };
 
   handleSave = () => {
-    console.log('Saves');
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
     const settingsToChange = {
       moodleApiEndpoint,
@@ -128,6 +148,27 @@ class Settings extends Component {
     this.setState({ moodlePassword: event.target.value });
   };
 
+  handleSelectCourse = event => {
+    this.setState({
+      moodleSelectedCourse: event.target.value,
+    });
+  };
+
+  importCourseData = () => {
+    const { onImportData } = this.props;
+    const {
+      moodleApiEndpoint,
+      moodleSelectedCourse,
+      moodleApiToken,
+    } = this.state;
+    const userId = -1; // if set to -1 all useres are included in the request. Else insert a specific userid to filter results.
+    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json&courseid=${moodleSelectedCourse}&userid=${userId}`;
+    fetch(moodleDataExportEndpoint)
+      .then(response => response.json())
+      .then(data => onImportData(data))
+      .then(() => this.handleClose());
+  };
+
   establishConnection = () => {
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
     // the name of the web service in moodle, which will then be used for the export/import of data
@@ -136,15 +177,94 @@ class Settings extends Component {
     // get the token to be authenticated later
     fetch(moodleTokenEndpoint)
       .then(response => response.json())
-      .then(data => this.getAvailableCourses(moodleApiEndpoint, data.token));
+      .then(data => {
+        this.setState({
+          moodleApiToken: data.token,
+        });
+        this.getAvailableCourses();
+      });
   };
 
-  getAvailableCourses = (moodleApiEndpoint, token) => {
-    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${token}&wsfunction=local_wstemplate_get_available_courses&moodlewsrestformat=json`;
+  getAvailableCourses = () => {
+    const { moodleApiEndpoint, moodleApiToken } = this.state;
+    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_available_courses&moodlewsrestformat=json`;
     fetch(moodleAvailableCoursesEndpoint)
       .then(res => res.json())
-      .then(res => console.log(res));
+      .then(res => {
+        this.setState({
+          connectionEstablished: true,
+          moodleAvailableCourses: res,
+        });
+        // check if a result is found to define the default value of the select
+        if (res.length > 0) {
+          this.setState({
+            moodleSelectedCourse: res[0].courseid,
+          });
+        }
+      });
   };
+
+  renderAvailableCourses() {
+    const { t, classes } = this.props;
+    const {
+      moodleSelectedCourse,
+      moodleAvailableCourses,
+      connectionEstablished,
+    } = this.state;
+
+    const menuItems = [];
+    moodleAvailableCourses.forEach(course => {
+      menuItems.push(
+        <MenuItem value={course.courseid} key={course.courseid}>
+          {course.shortname}
+        </MenuItem>,
+      );
+    });
+
+    let output = '';
+    if (connectionEstablished) {
+      output = (
+        <FormControl className={classes.formControl}>
+          <InputLabel id="demo-simple-select-label">
+            {t('Select Course to Import')}
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={moodleSelectedCourse}
+            onChange={this.handleSelectCourse}
+            fullWidth
+          >
+            {menuItems}
+          </Select>
+        </FormControl>
+      );
+    } else {
+      output = <p>Establish a connection to proceed</p>;
+    }
+    return output;
+  }
+
+  // Only rendered when the connection is established
+  renderImportButton() {
+    const { t, classes } = this.props;
+    const { connectionEstablished } = this.state;
+
+    let output = '';
+    if (connectionEstablished) {
+      output = (
+        <Button
+          variant="contained"
+          className={classes.button}
+          color="secondary"
+          onClick={this.importCourseData}
+        >
+          {t('Import Course Data')}
+        </Button>
+      );
+    }
+    return output;
+  }
 
   // Renders the save and cancel button
   renderButtons() {
@@ -176,7 +296,12 @@ class Settings extends Component {
     const { t, settings, activity, classes } = this.props;
     const { headerVisible } = settings;
 
-    const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
+    const {
+      moodleApiEndpoint,
+      moodleUsername,
+      moodlePassword,
+      connectionEstablished,
+    } = this.state;
 
     if (activity) {
       return <Loader />;
@@ -225,9 +350,24 @@ class Settings extends Component {
           fullWidth
         />
 
-        <Button variant="contained" onClick={this.establishConnection}>
-          Establish Connection
+        <Button
+          variant="contained"
+          className={classes.button}
+          color={connectionEstablished ? 'primary' : 'secondary'}
+          onClick={this.establishConnection}
+        >
+          {!connectionEstablished
+            ? t('Establish Connection')
+            : t('Connection established')}
         </Button>
+
+        <hr />
+
+        {this.renderAvailableCourses()}
+
+        {this.renderImportButton()}
+
+        <hr />
 
         {this.renderButtons()}
       </>

@@ -159,7 +159,8 @@ export class TeacherView extends Component {
 
   state = {
     selectedStudent: null,
-    outputTest: 'Nothing to display here - set in state',
+    dataImported: false,
+    data: [],
   };
 
   constructor(props) {
@@ -174,6 +175,45 @@ export class TeacherView extends Component {
     });
   };
 
+  renderCourseLog() {
+    const { t } = this.props;
+    const { dataImported, data } = this.state;
+
+    // Construct table rows to print later
+    const tableRows = [];
+    // Attributes that will be displayed in a column. Corresponds to keys of the data attribute in the state. The order is important!
+    const columnsToInclude = ['action', 'target', 'userid', 'timecreated'];
+    data.forEach(row => {
+      const columns = [];
+      columnsToInclude.forEach(column => {
+        const generatedKey = `column-'${column}-${row.timecreated}-${row.userid}`;
+        if (column !== 'timecreated') {
+          columns.push(<TableCell key={generatedKey}>{row.column}</TableCell>);
+        } else {
+          columns.push(
+            <TableCell key={generatedKey}>
+              {new Date(row.column * 1000).toLocaleString()}
+            </TableCell>,
+          );
+        }
+      });
+      tableRows.push(<TableRow>{columns}</TableRow>);
+    });
+    let output = '';
+    if (dataImported) {
+      output = <TableBody>{tableRows}</TableBody>;
+    } else {
+      output = (
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={4}>{t('No data imported yet')}</TableCell>
+          </TableRow>
+        </TableBody>
+      );
+    }
+    return output;
+  }
+
   render() {
     // extract properties from the props object
     const {
@@ -186,7 +226,7 @@ export class TeacherView extends Component {
       studentOptions,
       dispatchOpenSettings,
     } = this.props;
-    const { selectedStudent, outputTest } = this.state;
+    const { selectedStudent } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -251,21 +291,22 @@ export class TeacherView extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Action</TableCell>
+                    <TableCell>Target</TableCell>
                     <TableCell>User</TableCell>
                     <TableCell>Time Created</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={3}>{outputTest}</TableCell>
-                  </TableRow>
-                </TableBody>
+                {this.renderCourseLog()}
               </Table>
             </Paper>
           </Grid>
         </Grid>
 
-        <Settings />
+        <Settings
+          onImportData={data => {
+            this.setState({ dataImported: true, data });
+          }}
+        />
         <Fab
           color="primary"
           aria-label={t('Settings')}
