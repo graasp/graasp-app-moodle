@@ -153,12 +153,23 @@ export class TeacherView extends Component {
 
   state = {
     selectedStudent: null,
+    outputTest: 'Nothing to display here - set in state',
   };
 
   constructor(props) {
     super(props);
     const { dispatchGetUsers } = this.props;
     dispatchGetUsers();
+  }
+
+  componentDidMount() {
+    const username = 'teacher';
+    const password = username;
+    const service = 'myservice';
+    const moodleTokenUrl = `http://localhost:80/moodle/login/token.php?username=${username}&password=${password}&service=${service}`;
+    fetch(moodleTokenUrl)
+      .then(response => response.json())
+      .then(data => console.log(data));
   }
 
   handleChangeStudent = value => {
@@ -179,7 +190,7 @@ export class TeacherView extends Component {
       studentOptions,
       dispatchOpenSettings,
     } = this.props;
-    const { selectedStudent } = this.state;
+    const { selectedStudent, outputTest } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -235,8 +246,29 @@ export class TeacherView extends Component {
             >
               {t('Save a Random App Instance Resource via the API')}
             </Button>
+            <hr />
+            <Typography variant="h6" color="inherit">
+              {t('This table shows the sample output of the imported data')}
+            </Typography>
+            <Paper className={classes.root}>
+              <Table className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Action</TableCell>
+                    <TableCell>User</TableCell>
+                    <TableCell>Time Created</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={3}>{outputTest}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Paper>
           </Grid>
         </Grid>
+
         <Settings />
         <Fab
           color="primary"
