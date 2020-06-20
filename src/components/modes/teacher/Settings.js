@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Modal from '@material-ui/core/Modal';
@@ -127,6 +128,24 @@ class Settings extends Component {
     this.setState({ moodlePassword: event.target.value });
   };
 
+  establishConnection = () => {
+    const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
+    // the name of the web service in moodle, which will then be used for the export/import of data
+    const moodleService = 'myservice';
+    const moodleTokenEndpoint = `${moodleApiEndpoint}login/token.php?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
+    // get the token to be authenticated later
+    fetch(moodleTokenEndpoint)
+      .then(response => response.json())
+      .then(data => this.getAvailableCourses(moodleApiEndpoint, data.token));
+  };
+
+  getAvailableCourses = (moodleApiEndpoint, token) => {
+    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${token}&wsfunction=local_wstemplate_get_available_courses&moodlewsrestformat=json`;
+    fetch(moodleAvailableCoursesEndpoint)
+      .then(res => res.json())
+      .then(res => console.log(res));
+  };
+
   // Renders the save and cancel button
   renderButtons() {
     const { t } = this.props;
@@ -135,7 +154,7 @@ class Settings extends Component {
 
     return (
       <>
-        <Tooltip title={t('Save')} key="save">
+        <Tooltip title={t('Save configuration for next Session')} key="save">
           <IconButton
             size="small"
             onClick={this.handleSave}
@@ -205,6 +224,10 @@ class Settings extends Component {
           className={classes.textField}
           fullWidth
         />
+
+        <Button variant="contained" onClick={this.establishConnection}>
+          Establish Connection
+        </Button>
 
         {this.renderButtons()}
       </>
