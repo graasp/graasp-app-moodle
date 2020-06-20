@@ -115,6 +115,12 @@ export class TeacherView extends Component {
         value: PropTypes.string,
       }),
     ).isRequired,
+    // the import settings
+    settings: PropTypes.shape({
+      moodleApiEndpoint: PropTypes.string,
+      moodleUsername: PropTypes.string,
+      moodlePassword: PropTypes.string,
+    }).isRequired,
   };
 
   static defaultProps = {
@@ -163,10 +169,12 @@ export class TeacherView extends Component {
   }
 
   componentDidMount() {
-    const username = 'teacher';
-    const password = username;
-    const service = 'myservice';
-    const moodleTokenUrl = `http://localhost:80/moodle/login/token.php?username=${username}&password=${password}&service=${service}`;
+    const { settings } = this.props;
+    const { moodleApiEndpoint, moodleUsername, moodlePassword } = settings;
+    // the name of the web service in moodle, which will then be used for the export/import of data
+    const moodleService = 'myservice';
+    const moodleTokenUrl = `${moodleApiEndpoint}?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
+    // get the token to be authenticated later
     fetch(moodleTokenUrl)
       .then(response => response.json())
       .then(data => console.log(data));
@@ -284,7 +292,7 @@ export class TeacherView extends Component {
 }
 
 // get the app instance resources that are saved in the redux store
-const mapStateToProps = ({ users, appInstanceResources }) => ({
+const mapStateToProps = ({ users, appInstanceResources, appInstance }) => ({
   // we transform the list of students in the database
   // to the shape needed by the select component
   studentOptions: users.content.map(({ id, name }) => ({
@@ -292,6 +300,7 @@ const mapStateToProps = ({ users, appInstanceResources }) => ({
     label: name,
   })),
   appInstanceResources: appInstanceResources.content,
+  settings: appInstance.content.settings,
 });
 
 // allow this component to dispatch a post
