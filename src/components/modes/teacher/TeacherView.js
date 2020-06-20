@@ -173,12 +173,21 @@ export class TeacherView extends Component {
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = settings;
     // the name of the web service in moodle, which will then be used for the export/import of data
     const moodleService = 'myservice';
-    const moodleTokenUrl = `${moodleApiEndpoint}?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
+    const moodleTokenUrl = `${moodleApiEndpoint}login/token.php?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
     // get the token to be authenticated later
     fetch(moodleTokenUrl)
       .then(response => response.json())
-      .then(data => console.log(data));
+      .then(data => this.getAvailableCourses(moodleApiEndpoint, data.token));
+
+    // TODO: move all this code into the settings; then make iterative workflow; enter credentials; show courses; select cours; display data on page
   }
+
+  getAvailableCourses = (moodleApiEndpoint, token) => {
+    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${token}&wsfunction=local_wstemplate_get_available_courses&moodlewsrestformat=json`;
+    fetch(moodleAvailableCoursesEndpoint)
+      .then(res => res.json())
+      .then(res => console.log(res));
+  };
 
   handleChangeStudent = value => {
     this.setState({
