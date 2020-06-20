@@ -188,11 +188,11 @@ export class TeacherView extends Component {
       columnsToInclude.forEach(column => {
         const generatedKey = `column-'${column}-${row.timecreated}-${row.userid}`;
         if (column !== 'timecreated') {
-          columns.push(<TableCell key={generatedKey}>{row.column}</TableCell>);
+          columns.push(<TableCell key={generatedKey}>{row[column]}</TableCell>);
         } else {
           columns.push(
             <TableCell key={generatedKey}>
-              {new Date(row.column * 1000).toLocaleString()}
+              {new Date(row[column] * 1000).toLocaleString()}
             </TableCell>,
           );
         }
