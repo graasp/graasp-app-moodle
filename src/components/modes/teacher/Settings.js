@@ -246,12 +246,12 @@ class Settings extends Component {
     if (connectionEstablished) {
       output = (
         <FormControl className={classes.formControl}>
-          <InputLabel id="demo-simple-select-label">
+          <InputLabel id="select-course-label">
             {t('Select Course to Import')}
           </InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="select-course-label"
+            id="select-course"
             value={moodleSelectedCourse}
             onChange={this.handleSelectCourse}
             fullWidth
