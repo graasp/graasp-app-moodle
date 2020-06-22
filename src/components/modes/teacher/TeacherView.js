@@ -183,7 +183,14 @@ export class TeacherView extends Component {
     const tableRows = [];
     // Attributes that will be displayed in a column. Corresponds to keys of the data attribute in the state. The order is important!
     const columnsToInclude = ['action', 'target', 'userid', 'timecreated'];
-    data.forEach(row => {
+    const actionFilter = '';
+    const useridFilter = '';
+    const targetFilter = '';
+    const filteredData = data
+      .filter(row => row.action.includes(actionFilter))
+      .filter(row => useridFilter === '' || row.userid === useridFilter)
+      .filter(row => row.target.includes(targetFilter));
+    filteredData.forEach(row => {
       const columns = [];
       columnsToInclude.forEach(column => {
         const generatedKey = `column-'${column}-${row.timecreated}-${row.userid}`;
