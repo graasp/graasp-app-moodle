@@ -61,6 +61,8 @@ class Settings extends Component {
     const moodleAvailableCourses = [];
     const moodleSelectedCourse = '';
     const connectionEstablished = false;
+    // Indicates the user how to proceed or what went wrong to establish a connection
+    const connectionUserHint = 'Establish a connection to proceed';
     return {
       moodleApiEndpoint,
       moodleUsername,
@@ -69,6 +71,7 @@ class Settings extends Component {
       moodleSelectedCourse,
       connectionEstablished,
       moodleApiToken,
+      connectionUserHint,
     };
   })();
 
@@ -171,6 +174,7 @@ class Settings extends Component {
 
   establishConnection = () => {
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
+    const { t } = this.props;
     // the name of the web service in moodle, which will then be used for the export/import of data
     const moodleService = 'myservice';
     const moodleTokenEndpoint = `${moodleApiEndpoint}login/token.php?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
@@ -178,10 +182,26 @@ class Settings extends Component {
     fetch(moodleTokenEndpoint)
       .then(response => response.json())
       .then(data => {
-        this.setState({
-          moodleApiToken: data.token,
-        });
-        this.getAvailableCourses();
+        if (data.token) {
+          this.setState({
+            moodleApiToken: data.token,
+          });
+          this.getAvailableCourses();
+        } else if (data.errorcode === 'invalidlogin') {
+          // Display wrong login credential
+          this.setState({
+            connectionUserHint: t('Invalid login credentials'),
+            connectionEstablished: false,
+          });
+        } else {
+          // Indicate other problem and just print errorcode
+          this.setState({
+            connectionUserHint: t(
+              'Problem establishing the connection, maybe a wrong configuration in Moodle or a typo in the API endpoint?',
+            ),
+            connectionEstablished: false,
+          });
+        }
       });
   };
 
@@ -210,6 +230,7 @@ class Settings extends Component {
       moodleSelectedCourse,
       moodleAvailableCourses,
       connectionEstablished,
+      connectionUserHint,
     } = this.state;
 
     const menuItems = [];
@@ -240,7 +261,7 @@ class Settings extends Component {
         </FormControl>
       );
     } else {
-      output = <p>Establish a connection to proceed</p>;
+      output = <p>{connectionUserHint}</p>;
     }
     return output;
   }
@@ -325,7 +346,7 @@ class Settings extends Component {
 
         <TextField
           id="moodleApiEndpoint"
-          label={t('Moodle Endpoint (t.b.d.)')}
+          label={t('Moodle Endpoint (with trailing "/" at the end)')}
           value={moodleApiEndpoint}
           onChange={this.handleMoodleApiChange}
           className={classes.textField}
