@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Select from 'react-select';
@@ -161,6 +163,11 @@ export class TeacherView extends Component {
     selectedStudent: null,
     dataImported: false,
     data: [],
+    actionFilter: [],
+    useridFilter: '',
+    targetFilter: '',
+    uniqueActions: [],
+    uniqueTargets: [],
   };
 
   constructor(props) {
@@ -175,36 +182,75 @@ export class TeacherView extends Component {
     });
   };
 
+  handleActionFilter = event => {
+    const { options } = event.target;
+    const value = [];
+    for (let i = 0, l = options.length; i < l; i += 1) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    this.setState({
+      actionFilter: value,
+    });
+  };
+
+  onImportData = data => {
+    // Create sets for each filtarable column
+    const allActions = [];
+    const allTargets = [];
+    data.forEach(entry => {
+      allActions.push(entry.action);
+      allTargets.push(entry.target);
+    });
+    const uniqueActions = [...new Set(allActions)];
+    const uniqueTargets = [...new Set(allTargets)];
+    this.setState({ dataImported: true, data, uniqueActions, uniqueTargets });
+  };
+
   renderCourseLog() {
     const { t } = this.props;
-    const { dataImported, data } = this.state;
+    const {
+      dataImported,
+      data,
+      actionFilter,
+      useridFilter,
+      targetFilter,
+    } = this.state;
 
     // Construct table rows to print later
     const tableRows = [];
     // Attributes that will be displayed in a column. Corresponds to keys of the data attribute in the state. The order is important!
     const columnsToInclude = ['action', 'target', 'userid', 'timecreated'];
-    const actionFilter = '';
-    const useridFilter = '';
-    const targetFilter = '';
+    let rowCounter = 0;
+
     const filteredData = data
-      .filter(row => row.action.includes(actionFilter))
+      .filter(
+        row => actionFilter.length === 0 || actionFilter.includes(row.action),
+      )
       .filter(row => useridFilter === '' || row.userid === useridFilter)
       .filter(row => row.target.includes(targetFilter));
     filteredData.forEach(row => {
       const columns = [];
+      let columnCounter = 0;
       columnsToInclude.forEach(column => {
-        const generatedKey = `column-'${column}-${row.timecreated}-${row.userid}`;
+        const generatedColumnKey = `row-${rowCounter}-column-${columnCounter}`;
+        columnCounter += 1;
         if (column !== 'timecreated') {
-          columns.push(<TableCell key={generatedKey}>{row[column]}</TableCell>);
+          columns.push(
+            <TableCell key={generatedColumnKey}>{row[column]}</TableCell>,
+          );
         } else {
           columns.push(
-            <TableCell key={generatedKey}>
+            <TableCell key={generatedColumnKey}>
               {new Date(row[column] * 1000).toLocaleString()}
             </TableCell>,
           );
         }
       });
-      tableRows.push(<TableRow>{columns}</TableRow>);
+      const generatdeRowKey = `row-${rowCounter}`;
+      rowCounter += 1;
+      tableRows.push(<TableRow key={generatdeRowKey}>{columns}</TableRow>);
     });
     let output = '';
     if (dataImported) {
@@ -221,6 +267,34 @@ export class TeacherView extends Component {
     return output;
   }
 
+  renderMultiSelect = (
+    labelText,
+    placeholderText,
+    values,
+    options,
+    onChange,
+  ) => {
+    return (
+      <Autocomplete
+        multiple
+        filterSelectedOptions
+        options={options}
+        values={values}
+        onChange={onChange}
+        getOptionLabel={option => option}
+        renderInput={params => (
+          <TextField
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...params}
+            variant="standard"
+            label={labelText}
+            placeholder={placeholderText}
+          />
+        )}
+      />
+    );
+  };
+
   render() {
     // extract properties from the props object
     const {
@@ -233,7 +307,13 @@ export class TeacherView extends Component {
       studentOptions,
       dispatchOpenSettings,
     } = this.props;
-    const { selectedStudent } = this.state;
+    const {
+      selectedStudent,
+      actionFilter,
+      uniqueActions,
+      uniqueTargets,
+      targetFilter,
+    } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -293,6 +373,36 @@ export class TeacherView extends Component {
             <Typography variant="h6" color="inherit">
               {t('This table shows the sample output of the imported data')}
             </Typography>
+
+            <Typography variant="body1">Filter options</Typography>
+            <Grid container spacing={2}>
+              <Grid item sm={6} md={3} lg={2}>
+                {this.renderMultiSelect(
+                  t('Actions'),
+                  t('Select an option'),
+                  actionFilter,
+                  uniqueActions,
+                  (event, newValue) => {
+                    this.setState({ actionFilter: newValue });
+                  },
+                )}
+              </Grid>
+              <Grid item sm={6} md={3} lg={2}>
+                {this.renderMultiSelect(
+                  t('Target'),
+                  t('Select an option'),
+                  targetFilter,
+                  uniqueTargets,
+                  (event, newValue) => {
+                    this.setState({ targetFilter: newValue });
+                  },
+                )}
+              </Grid>
+              <Grid item sm={6} md={3} lg={2}>
+                Tes12
+              </Grid>
+            </Grid>
+
             <Paper className={classes.root}>
               <Table className={classes.table}>
                 <TableHead>
@@ -309,11 +419,7 @@ export class TeacherView extends Component {
           </Grid>
         </Grid>
 
-        <Settings
-          onImportData={data => {
-            this.setState({ dataImported: true, data });
-          }}
-        />
+        <Settings onImportData={data => this.onImportData(data)} />
         <Fab
           color="primary"
           aria-label={t('Settings')}
