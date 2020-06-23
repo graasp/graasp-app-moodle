@@ -222,20 +222,16 @@ export class TeacherView extends Component {
     const tableRows = [];
     // Attributes that will be displayed in a column. Corresponds to keys of the data attribute in the state. The order is important!
     const columnsToInclude = ['action', 'target', 'userid', 'timecreated'];
-    let rowCounter = 0;
-
     const filteredData = data
       .filter(
         row => actionFilter.length === 0 || actionFilter.includes(row.action),
       )
       .filter(row => useridFilter === '' || row.userid === useridFilter)
       .filter(row => row.target.includes(targetFilter));
-    filteredData.forEach(row => {
+    filteredData.forEach((row, i) => {
       const columns = [];
-      let columnCounter = 0;
-      columnsToInclude.forEach(column => {
-        const generatedColumnKey = `row-${rowCounter}-column-${columnCounter}`;
-        columnCounter += 1;
+      columnsToInclude.forEach((column, j) => {
+        const generatedColumnKey = `row-${String(i)}-column-${String(j)}`;
         if (column !== 'timecreated') {
           columns.push(
             <TableCell key={generatedColumnKey}>{row[column]}</TableCell>,
@@ -248,8 +244,7 @@ export class TeacherView extends Component {
           );
         }
       });
-      const generatdeRowKey = `row-${rowCounter}`;
-      rowCounter += 1;
+      const generatdeRowKey = `row-${String(i)}`;
       tableRows.push(<TableRow key={generatdeRowKey}>{columns}</TableRow>);
     });
     let output = '';
