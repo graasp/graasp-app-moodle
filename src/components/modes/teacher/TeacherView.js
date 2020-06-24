@@ -20,6 +20,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import Select from 'react-select';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
+import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
 import './TeacherView.css';
 import {
   patchAppInstanceResource,
@@ -30,6 +31,7 @@ import {
 import { getUsers } from '../../../actions/users';
 import { addQueryParamsToUrl } from '../../../utils/url';
 import Settings from './Settings';
+import { PUBLIC_VISIBILITY } from '../../../config/settings';
 
 /**
  * helper method to render the rows of the app instance resource table
@@ -84,6 +86,17 @@ const generateRandomAppInstanceResource = ({
 }) => {
   dispatchPostAppInstanceResource({
     data: { value: Math.random() },
+  });
+};
+
+const saveAsAppInstanceResource = (
+  importedData,
+  { dispatchPostAppInstanceResource },
+) => {
+  dispatchPostAppInstanceResource({
+    data: { importedData },
+    type: MOODLE_DATA,
+    visibility: PUBLIC_VISIBILITY,
   });
 };
 
@@ -168,6 +181,14 @@ export class TeacherView extends Component {
     targetFilter: '',
     uniqueActions: [],
     uniqueTargets: [],
+    selectedColumns: [
+      'userid',
+      'coursid',
+      'role',
+      'action',
+      'target',
+      'timecreated',
+    ],
   };
 
   constructor(props) {
@@ -209,6 +230,23 @@ export class TeacherView extends Component {
   };
 
   renderCourseLog() {
+    const { classes } = this.props;
+    const { selectedColumns } = this.state;
+    const headers = [];
+    selectedColumns.forEach(column => {
+      headers.push(<TableCell>{column}</TableCell>);
+    });
+    return (
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>{headers}</TableRow>
+        </TableHead>
+        {this.renderCourseLogContent()}
+      </Table>
+    );
+  }
+
+  renderCourseLogContent() {
     const { t } = this.props;
     const {
       dataImported,
@@ -216,12 +254,11 @@ export class TeacherView extends Component {
       actionFilter,
       useridFilter,
       targetFilter,
+      selectedColumns,
     } = this.state;
 
     // Construct table rows to print later
     const tableRows = [];
-    // Attributes that will be displayed in a column. Corresponds to keys of the data attribute in the state. The order is important!
-    const columnsToInclude = ['action', 'target', 'userid', 'timecreated'];
     const filteredData = data
       .filter(
         row => actionFilter.length === 0 || actionFilter.includes(row.action),
@@ -230,7 +267,7 @@ export class TeacherView extends Component {
       .filter(row => row.target.includes(targetFilter));
     filteredData.forEach((row, i) => {
       const columns = [];
-      columnsToInclude.forEach((column, j) => {
+      selectedColumns.forEach((column, j) => {
         const generatedColumnKey = `row-${String(i)}-column-${String(j)}`;
         if (column !== 'timecreated') {
           columns.push(
@@ -268,6 +305,7 @@ export class TeacherView extends Component {
     values,
     options,
     onChange,
+    defaultValue = [],
   ) => {
     return (
       <Autocomplete
@@ -276,6 +314,7 @@ export class TeacherView extends Component {
         options={options}
         values={values}
         onChange={onChange}
+        defaultValue={defaultValue}
         getOptionLabel={option => option}
         renderInput={params => (
           <TextField
@@ -308,6 +347,8 @@ export class TeacherView extends Component {
       uniqueActions,
       uniqueTargets,
       targetFilter,
+      data,
+      selectedColumns,
     } = this.state;
     return (
       <>
@@ -368,53 +409,73 @@ export class TeacherView extends Component {
             <Typography variant="h6" color="inherit">
               {t('This table shows the sample output of the imported data')}
             </Typography>
-
-            <Typography variant="body1">Filter options</Typography>
-            <Grid container spacing={2}>
-              <Grid item sm={6} md={3} lg={2}>
-                {this.renderMultiSelect(
-                  t('Actions'),
-                  t('Select an option'),
-                  actionFilter,
-                  uniqueActions,
-                  (event, newValue) => {
-                    this.setState({ actionFilter: newValue });
-                  },
-                )}
-              </Grid>
-              <Grid item sm={6} md={3} lg={2}>
-                {this.renderMultiSelect(
-                  t('Target'),
-                  t('Select an option'),
-                  targetFilter,
-                  uniqueTargets,
-                  (event, newValue) => {
-                    this.setState({ targetFilter: newValue });
-                  },
-                )}
-              </Grid>
-              <Grid item sm={6} md={3} lg={2}>
-                Tes12
-              </Grid>
-            </Grid>
-
             <Paper className={classes.root}>
-              <Table className={classes.table}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Action</TableCell>
-                    <TableCell>Target</TableCell>
-                    <TableCell>User</TableCell>
-                    <TableCell>Time Created</TableCell>
-                  </TableRow>
-                </TableHead>
-                {this.renderCourseLog()}
-              </Table>
+              <Typography variant="body1">Filter options</Typography>
+              <Grid container spacing={2}>
+                <Grid item sm={12}>
+                  {this.renderMultiSelect(
+                    t('Columns'),
+                    t('Select an option'),
+                    selectedColumns,
+                    [
+                      'userid',
+                      'coursid',
+                      'role',
+                      'edulevel',
+                      'eventname',
+                      'action',
+                      'target',
+                      'relateduserid',
+                      'timecreated',
+                    ],
+                    (event, newValue) => {
+                      this.setState({ selectedColumns: newValue });
+                    },
+                    selectedColumns,
+                  )}
+                </Grid>
+                <Grid item sm={6} md={3} lg={2}>
+                  {this.renderMultiSelect(
+                    t('Actions'),
+                    t('Select an option'),
+                    actionFilter,
+                    uniqueActions,
+                    (event, newValue) => {
+                      this.setState({ actionFilter: newValue });
+                    },
+                  )}
+                </Grid>
+                <Grid item sm={6} md={3} lg={2}>
+                  {this.renderMultiSelect(
+                    t('Target'),
+                    t('Select an option'),
+                    targetFilter,
+                    uniqueTargets,
+                    (event, newValue) => {
+                      this.setState({ targetFilter: newValue });
+                    },
+                  )}
+                </Grid>
+                <Grid item sm={6} md={3} lg={2}>
+                  <Button
+                    color="primary"
+                    className={classes.button}
+                    variant="contained"
+                    onClick={() => saveAsAppInstanceResource(data, this.props)}
+                  >
+                    {t('Save as App Instance')}
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {this.renderCourseLog()}
             </Paper>
           </Grid>
         </Grid>
 
-        <Settings onImportData={data => this.onImportData(data)} />
+        <Settings
+          onImportData={importedData => this.onImportData(importedData)}
+        />
         <Fab
           color="primary"
           aria-label={t('Settings')}

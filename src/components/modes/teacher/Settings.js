@@ -164,8 +164,7 @@ class Settings extends Component {
       moodleSelectedCourse,
       moodleApiToken,
     } = this.state;
-    const userId = -1; // if set to -1 all useres are included in the request. Else insert a specific userid to filter results.
-    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json&courseid=${moodleSelectedCourse}&userid=${userId}`;
+    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json&courseids[0]=${moodleSelectedCourse}`;
     fetch(moodleDataExportEndpoint)
       .then(response => response.json())
       .then(data => onImportData(data))
