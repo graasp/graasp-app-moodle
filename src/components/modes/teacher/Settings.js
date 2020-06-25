@@ -216,7 +216,7 @@ class Settings extends Component {
     const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json${courseParams}`;
     fetch(moodleDataExportEndpoint)
       .then(response => response.json())
-      .then(data => onImportData(data))
+      .then(data => onImportData(moodleApiEndpoint, data))
       .then(() => this.handleClose());
   };
 

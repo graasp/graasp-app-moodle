@@ -44,7 +44,7 @@ const renderAppInstanceResources = (
   if (!appInstanceResources.length) {
     return (
       <TableRow>
-        <TableCell colSpan={4}>No App Instance Resources</TableCell>
+        <TableCell colSpan={5}>No App Instance Resources</TableCell>
       </TableRow>
     );
   }
@@ -53,6 +53,7 @@ const renderAppInstanceResources = (
     <TableRow key={_id}>
       <TableCell scope="row">{_id}</TableCell>
       <TableCell>{appInstance}</TableCell>
+      <TableCell>{data.source}</TableCell>
       <TableCell>{data.importedData.length}</TableCell>
       <TableCell>
         <IconButton
@@ -68,10 +69,11 @@ const renderAppInstanceResources = (
 
 const saveAsAppInstanceResource = (
   importedData,
+  dataSource,
   { dispatchPostAppInstanceResource },
 ) => {
   dispatchPostAppInstanceResource({
-    data: { importedData },
+    data: { importedData, source: dataSource },
     type: MOODLE_DATA,
     visibility: PUBLIC_VISIBILITY,
   });
@@ -149,6 +151,7 @@ export class TeacherView extends Component {
   state = {
     dataImported: false,
     data: [],
+    dataSource: '',
     actionsFilter: [],
     targetsFilter: [],
     uniqueActions: [],
@@ -188,9 +191,10 @@ export class TeacherView extends Component {
 
   /**
    * Prepare filters based on the imported data and persist data to the state.
+   * @param {string} sourceUrl where the data is imported from
    * @param {*[]} data where each element shall have at least the following attributes: action, target, userid, courseid
    */
-  onImportData = data => {
+  onImportData = (sourceUrl, data) => {
     // Create sets for each filtarable column
     const allActions = [];
     const allTargets = [];
@@ -209,6 +213,7 @@ export class TeacherView extends Component {
     this.setState({
       dataImported: true,
       data,
+      dataSource: sourceUrl,
       uniqueActions,
       uniqueTargets,
       uniqueUsers,
@@ -452,7 +457,7 @@ export class TeacherView extends Component {
       appInstanceResources,
       dispatchOpenSettings,
     } = this.props;
-    const { data } = this.state;
+    const { data, dataSource } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -483,6 +488,7 @@ export class TeacherView extends Component {
                   <TableRow>
                     <TableCell>ID</TableCell>
                     <TableCell>App Instance</TableCell>
+                    <TableCell>Source</TableCell>
                     <TableCell>Data Entries</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
@@ -508,7 +514,9 @@ export class TeacherView extends Component {
                 className={classes.button}
                 disabled={data.length === 0}
                 variant="contained"
-                onClick={() => saveAsAppInstanceResource(data, this.props)}
+                onClick={() => {
+                  saveAsAppInstanceResource(data, dataSource, this.props);
+                }}
               >
                 {t('Save as App Instance')}
               </Button>
@@ -519,7 +527,9 @@ export class TeacherView extends Component {
         </Grid>
 
         <Settings
-          onImportData={importedData => this.onImportData(importedData)}
+          onImportData={(source, importedData) => {
+            this.onImportData(source, importedData);
+          }}
         />
         <Fab
           color="primary"
