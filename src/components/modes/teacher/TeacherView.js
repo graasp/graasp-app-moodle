@@ -213,13 +213,9 @@ export class TeacherView extends Component {
       dataImported: true,
       data,
       uniqueActions,
-      actionsFilter: uniqueActions,
       uniqueTargets,
-      targetsFilter: uniqueTargets,
       uniqueUsers,
-      usersFilter: uniqueUsers,
       uniqueCourses,
-      coursesFilter: uniqueCourses,
     });
   };
 
@@ -258,9 +254,16 @@ export class TeacherView extends Component {
       .filter(
         row => actionsFilter.length === 0 || actionsFilter.includes(row.action),
       )
-      .filter(row => usersFilter.includes(row.userid))
-      .filter(row => coursesFilter.includes(row.courseid))
-      .filter(row => targetsFilter.includes(row.target));
+      .filter(
+        row => usersFilter.length === 0 || usersFilter.includes(row.userid),
+      )
+      .filter(
+        row =>
+          coursesFilter.length === 0 || coursesFilter.includes(row.courseid),
+      )
+      .filter(
+        row => targetsFilter.length === 0 || targetsFilter.includes(row.target),
+      );
     filteredData.forEach((row, i) => {
       const columns = [];
       selectedColumns.forEach((column, j) => {
