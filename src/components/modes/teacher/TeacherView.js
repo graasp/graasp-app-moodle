@@ -303,6 +303,77 @@ export class TeacherView extends Component {
     );
   };
 
+  renderCourseLogConfiguration() {
+    const { classes, t } = this.props;
+    const {
+      actionFilter,
+      uniqueActions,
+      uniqueTargets,
+      targetFilter,
+      data,
+      selectedColumns,
+    } = this.state;
+
+    return (
+      <Grid container spacing={2}>
+        <Grid item sm={12}>
+          {this.renderMultiSelect(
+            t('Columns'),
+            t('Select an option'),
+            selectedColumns,
+            [
+              'userid',
+              'courseid',
+              'role',
+              'edulevel',
+              'eventname',
+              'action',
+              'target',
+              'relateduserid',
+              'timecreated',
+            ],
+            (event, newValue) => {
+              this.setState({ selectedColumns: newValue });
+            },
+            selectedColumns,
+          )}
+        </Grid>
+        <Grid item sm={6} md={3} lg={2}>
+          {this.renderMultiSelect(
+            t('Actions'),
+            t('Select an option'),
+            actionFilter,
+            uniqueActions,
+            (event, newValue) => {
+              this.setState({ actionFilter: newValue });
+            },
+          )}
+        </Grid>
+        <Grid item sm={6} md={3} lg={2}>
+          {this.renderMultiSelect(
+            t('Target'),
+            t('Select an option'),
+            targetFilter,
+            uniqueTargets,
+            (event, newValue) => {
+              this.setState({ targetFilter: newValue });
+            },
+          )}
+        </Grid>
+        <Grid item sm={6} md={3} lg={2}>
+          <Button
+            color="primary"
+            className={classes.button}
+            variant="contained"
+            onClick={() => saveAsAppInstanceResource(data, this.props)}
+          >
+            {t('Save as App Instance')}
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  }
+
   render() {
     // extract properties from the props object
     const {
@@ -314,14 +385,6 @@ export class TeacherView extends Component {
       appInstanceResources,
       dispatchOpenSettings,
     } = this.props;
-    const {
-      actionFilter,
-      uniqueActions,
-      uniqueTargets,
-      targetFilter,
-      data,
-      selectedColumns,
-    } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -370,62 +433,7 @@ export class TeacherView extends Component {
               {t('This table shows the sample output of the imported data')}
             </Typography>
             <Paper className={classes.root}>
-              <Grid container spacing={2}>
-                <Grid item sm={12}>
-                  {this.renderMultiSelect(
-                    t('Columns'),
-                    t('Select an option'),
-                    selectedColumns,
-                    [
-                      'userid',
-                      'courseid',
-                      'role',
-                      'edulevel',
-                      'eventname',
-                      'action',
-                      'target',
-                      'relateduserid',
-                      'timecreated',
-                    ],
-                    (event, newValue) => {
-                      this.setState({ selectedColumns: newValue });
-                    },
-                    selectedColumns,
-                  )}
-                </Grid>
-                <Grid item sm={6} md={3} lg={2}>
-                  {this.renderMultiSelect(
-                    t('Actions'),
-                    t('Select an option'),
-                    actionFilter,
-                    uniqueActions,
-                    (event, newValue) => {
-                      this.setState({ actionFilter: newValue });
-                    },
-                  )}
-                </Grid>
-                <Grid item sm={6} md={3} lg={2}>
-                  {this.renderMultiSelect(
-                    t('Target'),
-                    t('Select an option'),
-                    targetFilter,
-                    uniqueTargets,
-                    (event, newValue) => {
-                      this.setState({ targetFilter: newValue });
-                    },
-                  )}
-                </Grid>
-                <Grid item sm={6} md={3} lg={2}>
-                  <Button
-                    color="primary"
-                    className={classes.button}
-                    variant="contained"
-                    onClick={() => saveAsAppInstanceResource(data, this.props)}
-                  >
-                    {t('Save as App Instance')}
-                  </Button>
-                </Grid>
-              </Grid>
+              {this.renderCourseLogConfiguration()}
 
               {this.renderCourseLog()}
             </Paper>
