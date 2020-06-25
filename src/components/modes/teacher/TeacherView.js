@@ -156,11 +156,14 @@ export class TeacherView extends Component {
   state = {
     dataImported: false,
     data: [],
-    actionFilter: [],
-    useridFilter: '',
-    targetFilter: '',
+    actionsFilter: [],
+    targetsFilter: [],
     uniqueActions: [],
     uniqueTargets: [],
+    usersFilter: [],
+    uniqueUsers: [],
+    coursesFilter: [],
+    uniqueCourses: [],
     selectedColumns: [
       'userid',
       'courseid',
@@ -177,7 +180,7 @@ export class TeacherView extends Component {
     dispatchGetUsers();
   }
 
-  handleActionFilter = event => {
+  handleactionsFilter = event => {
     const { options } = event.target;
     const value = [];
     for (let i = 0, l = options.length; i < l; i += 1) {
@@ -186,7 +189,7 @@ export class TeacherView extends Component {
       }
     }
     this.setState({
-      actionFilter: value,
+      actionsFilter: value,
     });
   };
 
@@ -194,13 +197,30 @@ export class TeacherView extends Component {
     // Create sets for each filtarable column
     const allActions = [];
     const allTargets = [];
+    const allUsers = [];
+    const allCourses = [];
     data.forEach(entry => {
       allActions.push(entry.action);
       allTargets.push(entry.target);
+      allUsers.push(entry.userid);
+      allCourses.push(entry.courseid);
     });
     const uniqueActions = [...new Set(allActions)];
     const uniqueTargets = [...new Set(allTargets)];
-    this.setState({ dataImported: true, data, uniqueActions, uniqueTargets });
+    const uniqueUsers = [...new Set(allUsers)];
+    const uniqueCourses = [...new Set(allCourses)];
+    this.setState({
+      dataImported: true,
+      data,
+      uniqueActions,
+      actionsFilter: uniqueActions,
+      uniqueTargets,
+      targetsFilter: uniqueTargets,
+      uniqueUsers,
+      usersFilter: uniqueUsers,
+      uniqueCourses,
+      coursesFilter: uniqueCourses,
+    });
   };
 
   renderCourseLog() {
@@ -225,9 +245,10 @@ export class TeacherView extends Component {
     const {
       dataImported,
       data,
-      actionFilter,
-      useridFilter,
-      targetFilter,
+      actionsFilter,
+      usersFilter,
+      targetsFilter,
+      coursesFilter,
       selectedColumns,
     } = this.state;
 
@@ -235,10 +256,11 @@ export class TeacherView extends Component {
     const tableRows = [];
     const filteredData = data
       .filter(
-        row => actionFilter.length === 0 || actionFilter.includes(row.action),
+        row => actionsFilter.length === 0 || actionsFilter.includes(row.action),
       )
-      .filter(row => useridFilter === '' || row.userid === useridFilter)
-      .filter(row => row.target.includes(targetFilter));
+      .filter(row => usersFilter.includes(row.userid))
+      .filter(row => coursesFilter.includes(row.courseid))
+      .filter(row => targetsFilter.includes(row.target));
     filteredData.forEach((row, i) => {
       const columns = [];
       selectedColumns.forEach((column, j) => {
@@ -273,30 +295,31 @@ export class TeacherView extends Component {
     return output;
   }
 
+  // options must be array that is convertible as string!
   renderMultiSelect = (
     labelText,
-    placeholderText,
     values,
     options,
     onChange,
     defaultValue = [],
   ) => {
+    const { t } = this.props;
     return (
       <Autocomplete
         multiple
         filterSelectedOptions
         options={options}
-        values={values}
+        values={values || ''}
         onChange={onChange}
         defaultValue={defaultValue}
-        getOptionLabel={option => option}
+        getOptionLabel={option => String(option)}
         renderInput={params => (
           <TextField
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...params}
             variant="standard"
             label={labelText}
-            placeholder={placeholderText}
+            placeholder={t('Select an option')}
           />
         )}
       />
@@ -306,10 +329,14 @@ export class TeacherView extends Component {
   renderCourseLogConfiguration() {
     const { classes, t } = this.props;
     const {
-      actionFilter,
+      actionsFilter,
       uniqueActions,
       uniqueTargets,
-      targetFilter,
+      targetsFilter,
+      usersFilter,
+      uniqueUsers,
+      coursesFilter,
+      uniqueCourses,
       data,
       selectedColumns,
     } = this.state;
@@ -319,7 +346,6 @@ export class TeacherView extends Component {
         <Grid item sm={12}>
           {this.renderMultiSelect(
             t('Columns'),
-            t('Select an option'),
             selectedColumns,
             [
               'userid',
@@ -341,22 +367,40 @@ export class TeacherView extends Component {
         <Grid item sm={6} md={3} lg={2}>
           {this.renderMultiSelect(
             t('Actions'),
-            t('Select an option'),
-            actionFilter,
+            actionsFilter,
             uniqueActions,
             (event, newValue) => {
-              this.setState({ actionFilter: newValue });
+              this.setState({ actionsFilter: newValue });
+            },
+          )}
+        </Grid>
+        <Grid item sm={6} md={3} lg={2}>
+          {this.renderMultiSelect(
+            t('User'),
+            usersFilter,
+            uniqueUsers,
+            (event, newValue) => {
+              this.setState({ usersFilter: newValue });
             },
           )}
         </Grid>
         <Grid item sm={6} md={3} lg={2}>
           {this.renderMultiSelect(
             t('Target'),
-            t('Select an option'),
-            targetFilter,
+            targetsFilter,
             uniqueTargets,
             (event, newValue) => {
-              this.setState({ targetFilter: newValue });
+              this.setState({ targetsFilter: newValue });
+            },
+          )}
+        </Grid>
+        <Grid item sm={6} md={3} lg={2}>
+          {this.renderMultiSelect(
+            t('Courses'),
+            coursesFilter,
+            uniqueCourses,
+            (event, newValue) => {
+              this.setState({ coursesFilter: newValue });
             },
           )}
         </Grid>
