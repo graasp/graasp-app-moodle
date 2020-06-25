@@ -535,13 +535,7 @@ export class TeacherView extends Component {
 }
 
 // get the app instance resources that are saved in the redux store
-const mapStateToProps = ({ users, appInstanceResources, appInstance }) => ({
-  // we transform the list of students in the database
-  // to the shape needed by the select component
-  studentOptions: users.content.map(({ id, name }) => ({
-    value: id,
-    label: name,
-  })),
+const mapStateToProps = ({ appInstanceResources, appInstance }) => ({
   appInstanceResources: appInstanceResources.content,
   settings: appInstance.content.settings,
 });
