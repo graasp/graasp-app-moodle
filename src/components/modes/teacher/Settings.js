@@ -10,9 +10,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Modal from '@material-ui/core/Modal';
-import Switch from '@material-ui/core/Switch';
 import { connect } from 'react-redux';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { withTranslation } from 'react-i18next';
 import { closeSettings, patchAppInstance } from '../../../actions';
 import Loader from '../../common/Loader';
@@ -82,7 +80,6 @@ class Settings extends Component {
     open: PropTypes.bool.isRequired,
     activity: PropTypes.bool.isRequired,
     settings: PropTypes.shape({
-      headerVisible: PropTypes.bool.isRequired,
       moodleApiEndpoint: PropTypes.string,
       moodleUsername: PropTypes.string,
       moodlePassword: PropTypes.string,
@@ -105,16 +102,6 @@ class Settings extends Component {
     dispatchPatchAppInstance({
       data: newSettings,
     });
-  };
-
-  handleChangeHeaderVisibility = () => {
-    const {
-      settings: { headerVisible },
-    } = this.props;
-    const settingsToChange = {
-      headerVisible: !headerVisible,
-    };
-    this.saveSettings(settingsToChange);
   };
 
   handleClose = () => {
@@ -306,8 +293,7 @@ class Settings extends Component {
   }
 
   renderModalContent() {
-    const { t, settings, activity, classes } = this.props;
-    const { headerVisible } = settings;
+    const { t, activity, classes } = this.props;
 
     const {
       moodleApiEndpoint,
@@ -320,22 +306,8 @@ class Settings extends Component {
       return <Loader />;
     }
 
-    const switchControl = (
-      <Switch
-        color="primary"
-        checked={headerVisible}
-        onChange={this.handleChangeHeaderVisibility}
-        value="headerVisibility"
-      />
-    );
-
     return (
       <>
-        <FormControlLabel
-          control={switchControl}
-          label={t('Show Header to Students')}
-        />
-
         <TextField
           id="moodleApiEndpoint"
           label={t('Moodle Endpoint (with trailing "/" at the end)')}
