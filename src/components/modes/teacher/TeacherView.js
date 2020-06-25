@@ -16,14 +16,11 @@ import IconButton from '@material-ui/core/IconButton';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import DeleteIcon from '@material-ui/icons/Delete';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import Select from 'react-select';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
 import './TeacherView.css';
 import {
-  patchAppInstanceResource,
   postAppInstanceResource,
   deleteAppInstanceResource,
   openSettings,
@@ -36,13 +33,12 @@ import { PUBLIC_VISIBILITY } from '../../../config/settings';
 /**
  * helper method to render the rows of the app instance resource table
  * @param appInstanceResources
- * @param dispatchPatchAppInstanceResource
  * @param dispatchDeleteAppInstanceResource
  * @returns {*}
  */
 const renderAppInstanceResources = (
   appInstanceResources,
-  { dispatchPatchAppInstanceResource, dispatchDeleteAppInstanceResource },
+  { dispatchDeleteAppInstanceResource },
 ) => {
   // if there are no resources, show an empty table
   if (!appInstanceResources.length) {
@@ -57,19 +53,8 @@ const renderAppInstanceResources = (
     <TableRow key={_id}>
       <TableCell scope="row">{_id}</TableCell>
       <TableCell>{appInstance}</TableCell>
-      <TableCell>{data.value}</TableCell>
+      <TableCell>{data.importedData.length}</TableCell>
       <TableCell>
-        <IconButton
-          color="primary"
-          onClick={() => {
-            dispatchPatchAppInstanceResource({
-              id: _id,
-              data: { value: Math.random() },
-            });
-          }}
-        >
-          <RefreshIcon />
-        </IconButton>
         <IconButton
           color="primary"
           onClick={() => dispatchDeleteAppInstanceResource(_id)}
@@ -79,14 +64,6 @@ const renderAppInstanceResources = (
       </TableCell>
     </TableRow>
   ));
-};
-
-const generateRandomAppInstanceResource = ({
-  dispatchPostAppInstanceResource,
-}) => {
-  dispatchPostAppInstanceResource({
-    data: { value: Math.random() },
-  });
 };
 
 const saveAsAppInstanceResource = (
@@ -110,6 +87,7 @@ export class TeacherView extends Component {
       main: PropTypes.string,
       button: PropTypes.string,
       message: PropTypes.string,
+      sectionTitle: PropTypes.string,
       fab: PropTypes.string,
     }).isRequired,
     dispatchGetUsers: PropTypes.func.isRequired,
@@ -164,6 +142,9 @@ export class TeacherView extends Component {
       color: theme.status.danger.color,
       marginBottom: theme.spacing(2),
     },
+    sectionTitle: {
+      marginTop: theme.spacing(3),
+    },
     fab: {
       margin: theme.spacing(),
       position: 'fixed',
@@ -173,7 +154,6 @@ export class TeacherView extends Component {
   });
 
   state = {
-    selectedStudent: null,
     dataImported: false,
     data: [],
     actionFilter: [],
@@ -196,12 +176,6 @@ export class TeacherView extends Component {
     const { dispatchGetUsers } = this.props;
     dispatchGetUsers();
   }
-
-  handleChangeStudent = value => {
-    this.setState({
-      selectedStudent: value,
-    });
-  };
 
   handleActionFilter = event => {
     const { options } = event.target;
@@ -338,11 +312,9 @@ export class TeacherView extends Component {
       t,
       // these properties are injected by the redux mapStateToProps method
       appInstanceResources,
-      studentOptions,
       dispatchOpenSettings,
     } = this.props;
     const {
-      selectedStudent,
       actionFilter,
       uniqueActions,
       uniqueTargets,
@@ -366,21 +338,13 @@ export class TeacherView extends Component {
                 </pre>
               </a>
             </Paper>
-            <Typography variant="h5" color="inherit">
-              {t('View the Students in the Sample Space')}
-            </Typography>
-            <Select
-              className="StudentSelect"
-              value={selectedStudent}
-              options={studentOptions}
-              onChange={this.handleChangeStudent}
-              isClearable
-            />
-            <hr />
-            <Typography variant="h6" color="inherit">
-              {t(
-                'This table illustrates how an app can save resources on the server.',
-              )}
+
+            <Typography
+              variant="h6"
+              color="inherit"
+              className={classes.sectionTitle}
+            >
+              {t('This table illustrates the saved resources on the server.')}
             </Typography>
             <Paper className={classes.root}>
               <Table className={classes.table}>
@@ -388,7 +352,7 @@ export class TeacherView extends Component {
                   <TableRow>
                     <TableCell>ID</TableCell>
                     <TableCell>App Instance</TableCell>
-                    <TableCell>Value</TableCell>
+                    <TableCell>Data Entries</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -397,20 +361,15 @@ export class TeacherView extends Component {
                 </TableBody>
               </Table>
             </Paper>
-            <Button
-              color="primary"
-              className={classes.button}
-              variant="contained"
-              onClick={() => generateRandomAppInstanceResource(this.props)}
+
+            <Typography
+              variant="h6"
+              color="inherit"
+              className={classes.sectionTitle}
             >
-              {t('Save a Random App Instance Resource via the API')}
-            </Button>
-            <hr />
-            <Typography variant="h6" color="inherit">
               {t('This table shows the sample output of the imported data')}
             </Typography>
             <Paper className={classes.root}>
-              <Typography variant="body1">Filter options</Typography>
               <Grid container spacing={2}>
                 <Grid item sm={12}>
                   {this.renderMultiSelect(
@@ -506,7 +465,6 @@ const mapStateToProps = ({ users, appInstanceResources, appInstance }) => ({
 const mapDispatchToProps = {
   dispatchGetUsers: getUsers,
   dispatchPostAppInstanceResource: postAppInstanceResource,
-  dispatchPatchAppInstanceResource: patchAppInstanceResource,
   dispatchDeleteAppInstanceResource: deleteAppInstanceResource,
   dispatchOpenSettings: openSettings,
 };
