@@ -101,13 +101,6 @@ export class TeacherView extends Component {
         data: PropTypes.object,
       }),
     ),
-    // this is the shape of the select options for students
-    studentOptions: PropTypes.arrayOf(
-      PropTypes.shape({
-        label: PropTypes.string,
-        value: PropTypes.string,
-      }),
-    ).isRequired,
     // the import settings
     settings: PropTypes.shape({
       moodleApiEndpoint: PropTypes.string,
