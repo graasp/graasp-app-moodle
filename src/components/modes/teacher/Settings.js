@@ -330,6 +330,7 @@ class Settings extends Component {
           id="moodlePassword"
           label={t('Moodle Password')}
           value={moodlePassword}
+          type="password"
           onChange={this.handleMoodlePasswordChange}
           className={classes.textField}
           fullWidth
