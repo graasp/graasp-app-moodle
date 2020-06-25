@@ -135,25 +135,12 @@ class Settings extends Component {
     this.setState({ moodlePassword: event.target.value });
   };
 
-  importCourseData = () => {
-    const { onImportData } = this.props;
-    const {
-      moodleApiEndpoint,
-      moodleSelectedCourse,
-      moodleApiToken,
-    } = this.state;
-    // preapre query params
-    let courseParams = '';
-    moodleSelectedCourse.forEach((course, index) => {
-      courseParams += `&courseids[${index}]=${course.courseid}`;
-    });
-    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json${courseParams}`;
-    fetch(moodleDataExportEndpoint)
-      .then(response => response.json())
-      .then(data => onImportData(data))
-      .then(() => this.handleClose());
-  };
-
+  /**
+   * Establish a connection to the specified API endpoint.
+   * Therefore, retrieve a token for future authentication and store it in the state.
+   * If connection is successfully established, getAvailableCourses() is executed.
+   * Else, the connectionUserHint is updated with an error related message.
+   */
   establishConnection = () => {
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
     const { t } = this.props;
@@ -170,13 +157,13 @@ class Settings extends Component {
           });
           this.getAvailableCourses();
         } else if (data.errorcode === 'invalidlogin') {
-          // Display wrong login credential
+          // Display wrong login credential error message
           this.setState({
             connectionUserHint: t('Invalid login credentials'),
             connectionEstablished: false,
           });
         } else {
-          // Indicate other problem and just print errorcode
+          // Display generic error during request
           this.setState({
             connectionUserHint: t(
               'Problem establishing the connection, maybe a wrong configuration in Moodle or a typo in the API endpoint?',
@@ -187,6 +174,10 @@ class Settings extends Component {
       });
   };
 
+  /**
+   * Get a list of all available courses for this user.
+   * The result is stored in the state of the component.
+   */
   getAvailableCourses = () => {
     const { moodleApiEndpoint, moodleApiToken } = this.state;
     const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_available_courses&moodlewsrestformat=json`;
@@ -206,8 +197,36 @@ class Settings extends Component {
       });
   };
 
+  /**
+   * Load data for selected courses through API.
+   * Calls the callback passed in by the parant component.
+   */
+  importCourseData = () => {
+    const { onImportData } = this.props;
+    const {
+      moodleApiEndpoint,
+      moodleSelectedCourse,
+      moodleApiToken,
+    } = this.state;
+    // preapre query params
+    let courseParams = '';
+    moodleSelectedCourse.forEach((course, index) => {
+      courseParams += `&courseids[${index}]=${course.courseid}`;
+    });
+    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json${courseParams}`;
+    fetch(moodleDataExportEndpoint)
+      .then(response => response.json())
+      .then(data => onImportData(data))
+      .then(() => this.handleClose());
+  };
+
+  /**
+   * Renders a Autocomplete Component containing all the available courses.
+   * If the connection is not yet established, a feedback over the progress
+   * for the establishement is rendered.
+   */
   renderAvailableCourses() {
-    const { t, classes } = this.props;
+    const { t } = this.props;
     const {
       moodleSelectedCourse,
       moodleAvailableCourses,
@@ -219,7 +238,6 @@ class Settings extends Component {
     if (connectionEstablished) {
       output = (
         <Autocomplete
-          className={classes.formControl}
           multiple
           filterSelectedOptions
           options={moodleAvailableCourses}
@@ -245,7 +263,9 @@ class Settings extends Component {
     return output;
   }
 
-  // Only rendered when the connection is established
+  /**
+   * Render the import button once the connection is established
+   */
   renderImportButton() {
     const { t, classes } = this.props;
     const { connectionEstablished } = this.state;
@@ -266,7 +286,9 @@ class Settings extends Component {
     return output;
   }
 
-  // Renders the save and cancel button
+  /**
+   * Renders the save and cancel button
+   */
   renderButtons() {
     const { t } = this.props;
 

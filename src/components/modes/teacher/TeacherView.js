@@ -173,7 +173,7 @@ export class TeacherView extends Component {
     dispatchGetUsers();
   }
 
-  handleactionsFilter = event => {
+  handleActionsFilter = event => {
     const { options } = event.target;
     const value = [];
     for (let i = 0, l = options.length; i < l; i += 1) {
@@ -186,6 +186,10 @@ export class TeacherView extends Component {
     });
   };
 
+  /**
+   * Prepare filters based on the imported data and persist data to the state.
+   * @param {*[]} data where each element shall have at least the following attributes: action, target, userid, courseid
+   */
   onImportData = data => {
     // Create sets for each filtarable column
     const allActions = [];
@@ -212,6 +216,9 @@ export class TeacherView extends Component {
     });
   };
 
+  /**
+   * Render the Table for the course log
+   */
   renderCourseLog() {
     const { classes } = this.props;
     const { selectedColumns } = this.state;
@@ -229,6 +236,10 @@ export class TeacherView extends Component {
     );
   }
 
+  /**
+   * Render the actual TableBody with selected columns and applied filters.
+   * If no data is imported yet or no data matches the filter criterion, a specific message is displayed.
+   */
   renderCourseLogContent() {
     const { t } = this.props;
     const {
@@ -278,7 +289,19 @@ export class TeacherView extends Component {
     });
     let output = '';
     if (dataImported) {
-      output = <TableBody>{tableRows}</TableBody>;
+      if (filteredData.length > 0) {
+        output = <TableBody>{tableRows}</TableBody>;
+      } else {
+        output = (
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={4}>
+                {t('No data matching the filter criterion')}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        );
+      }
     } else {
       output = (
         <TableBody>
@@ -292,6 +315,18 @@ export class TeacherView extends Component {
   }
 
   // options must be array that is convertible as string!
+  /**
+   * Render a Autocomplete Component configured to work as multi-select.
+   *
+   * The type of values, options and defaultValue should be the same.
+   *
+   * @param {string} labelText - The text displayed besides the input element
+   * @param {string[] | number[]} values - The values currently selected
+   * @param {string[] | number[]} options - The possible options to choose from
+   * @param {function(Object, string[] | number[])} onChange - The function executed
+   *    when an element is added/deleted from the selection
+   * @param {string[] | number[]} [defaultValue=[]] - The default value to be used
+   */
   renderMultiSelect = (
     labelText,
     values,
@@ -305,7 +340,7 @@ export class TeacherView extends Component {
         multiple
         filterSelectedOptions
         options={options}
-        values={values || ''}
+        values={values}
         onChange={onChange}
         defaultValue={defaultValue}
         getOptionLabel={option => String(option)}
@@ -322,8 +357,11 @@ export class TeacherView extends Component {
     );
   };
 
+  /**
+   * Render the possible configurations such as columns to display and available filters.
+   */
   renderCourseLogConfiguration() {
-    const { classes, t } = this.props;
+    const { t } = this.props;
     const {
       actionsFilter,
       uniqueActions,
@@ -333,7 +371,6 @@ export class TeacherView extends Component {
       uniqueUsers,
       coursesFilter,
       uniqueCourses,
-      data,
       selectedColumns,
     } = this.state;
 
@@ -400,16 +437,6 @@ export class TeacherView extends Component {
             },
           )}
         </Grid>
-        <Grid item sm={6} md={3} lg={2}>
-          <Button
-            color="primary"
-            className={classes.button}
-            variant="contained"
-            onClick={() => saveAsAppInstanceResource(data, this.props)}
-          >
-            {t('Save as App Instance')}
-          </Button>
-        </Grid>
       </Grid>
     );
   }
@@ -425,6 +452,7 @@ export class TeacherView extends Component {
       appInstanceResources,
       dispatchOpenSettings,
     } = this.props;
+    const { data } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -474,6 +502,16 @@ export class TeacherView extends Component {
             </Typography>
             <Paper className={classes.root}>
               {this.renderCourseLogConfiguration()}
+
+              <Button
+                color="primary"
+                className={classes.button}
+                disabled={data.length === 0}
+                variant="contained"
+                onClick={() => saveAsAppInstanceResource(data, this.props)}
+              >
+                {t('Save as App Instance')}
+              </Button>
 
               {this.renderCourseLog()}
             </Paper>
