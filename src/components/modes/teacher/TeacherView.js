@@ -183,7 +183,7 @@ export class TeacherView extends Component {
     uniqueTargets: [],
     selectedColumns: [
       'userid',
-      'coursid',
+      'courseid',
       'role',
       'action',
       'target',
@@ -234,7 +234,7 @@ export class TeacherView extends Component {
     const { selectedColumns } = this.state;
     const headers = [];
     selectedColumns.forEach(column => {
-      headers.push(<TableCell>{column}</TableCell>);
+      headers.push(<TableCell key={`column-${column}`}>{column}</TableCell>);
     });
     return (
       <Table className={classes.table}>
@@ -419,7 +419,7 @@ export class TeacherView extends Component {
                     selectedColumns,
                     [
                       'userid',
-                      'coursid',
+                      'courseid',
                       'role',
                       'edulevel',
                       'eventname',

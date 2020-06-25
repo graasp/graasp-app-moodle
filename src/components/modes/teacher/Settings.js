@@ -6,10 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Modal from '@material-ui/core/Modal';
@@ -151,12 +148,6 @@ class Settings extends Component {
     this.setState({ moodlePassword: event.target.value });
   };
 
-  handleSelectCourse = event => {
-    this.setState({
-      moodleSelectedCourse: event.target.value,
-    });
-  };
-
   importCourseData = () => {
     const { onImportData } = this.props;
     const {
@@ -164,7 +155,12 @@ class Settings extends Component {
       moodleSelectedCourse,
       moodleApiToken,
     } = this.state;
-    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json&courseids[0]=${moodleSelectedCourse}`;
+    // preapre query params
+    let courseParams = '';
+    moodleSelectedCourse.forEach((course, index) => {
+      courseParams += `&courseids[${index}]=${course.courseid}`;
+    });
+    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json${courseParams}`;
     fetch(moodleDataExportEndpoint)
       .then(response => response.json())
       .then(data => onImportData(data))
@@ -232,32 +228,29 @@ class Settings extends Component {
       connectionUserHint,
     } = this.state;
 
-    const menuItems = [];
-    moodleAvailableCourses.forEach(course => {
-      menuItems.push(
-        <MenuItem value={course.courseid} key={course.courseid}>
-          {course.shortname}
-        </MenuItem>,
-      );
-    });
-
     let output = '';
     if (connectionEstablished) {
       output = (
-        <FormControl className={classes.formControl}>
-          <InputLabel id="select-course-label">
-            {t('Select Course to Import')}
-          </InputLabel>
-          <Select
-            labelId="select-course-label"
-            id="select-course"
-            value={moodleSelectedCourse}
-            onChange={this.handleSelectCourse}
-            fullWidth
-          >
-            {menuItems}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          className={classes.formControl}
+          multiple
+          filterSelectedOptions
+          options={moodleAvailableCourses}
+          values={moodleSelectedCourse}
+          onChange={(event, newValue) => {
+            this.setState({ moodleSelectedCourse: newValue });
+          }}
+          getOptionLabel={option => option.shortname}
+          renderInput={params => (
+            <TextField
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...params}
+              variant="standard"
+              label={t('Select Course to Import')}
+              placeholder={t('Select an option')}
+            />
+          )}
+        />
       );
     } else {
       output = <p>{connectionUserHint}</p>;
