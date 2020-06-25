@@ -109,10 +109,6 @@ class Settings extends Component {
     dispatchCloseSettings();
   };
 
-  isSaveDisabled = () => {
-    return false;
-  };
-
   handleSave = () => {
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
     const settingsToChange = {
@@ -291,8 +287,9 @@ class Settings extends Component {
    */
   renderButtons() {
     const { t } = this.props;
+    const { moodleApiEndpoint, moodleUsername } = this.state;
 
-    const saveDisabled = this.isSaveDisabled();
+    const saveDisabled = moodleApiEndpoint === '' || moodleUsername === '';
 
     return (
       <>
