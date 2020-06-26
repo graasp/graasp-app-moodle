@@ -141,7 +141,7 @@ class Settings extends Component {
     const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
     const { t } = this.props;
     // the name of the web service in moodle, which will then be used for the export/import of data
-    const moodleService = 'myservice';
+    const moodleService = 'wafed_webservices';
     const moodleTokenEndpoint = `${moodleApiEndpoint}login/token.php?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
     // get the token to be authenticated later
     fetch(moodleTokenEndpoint)
@@ -176,7 +176,7 @@ class Settings extends Component {
    */
   getAvailableCourses = () => {
     const { moodleApiEndpoint, moodleApiToken } = this.state;
-    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_available_courses&moodlewsrestformat=json`;
+    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_available_courses&moodlewsrestformat=json`;
     fetch(moodleAvailableCoursesEndpoint)
       .then(res => res.json())
       .then(res => {
@@ -203,7 +203,7 @@ class Settings extends Component {
     moodleSelectedCourse.forEach((course, index) => {
       courseParams += `&courseids[${index}]=${course.courseid}`;
     });
-    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wstemplate_get_course_data&moodlewsrestformat=json${courseParams}`;
+    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_course_data&moodlewsrestformat=json${courseParams}`;
     fetch(moodleDataExportEndpoint)
       .then(response => response.json())
       .then(data => onImportData(moodleApiEndpoint, data))
