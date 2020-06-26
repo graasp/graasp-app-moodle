@@ -79,6 +79,18 @@ const saveAsAppInstanceResource = (
   });
 };
 
+const availableColumns = [
+  'userid',
+  'courseid',
+  'role',
+  'edulevel',
+  'eventname',
+  'action',
+  'target',
+  'relateduserid',
+  'timecreated',
+];
+
 export class TeacherView extends Component {
   static propTypes = {
     t: PropTypes.func.isRequired,
@@ -152,14 +164,6 @@ export class TeacherView extends Component {
     dataImported: false,
     data: [],
     dataSource: '',
-    actionsFilter: [],
-    targetsFilter: [],
-    uniqueActions: [],
-    uniqueTargets: [],
-    usersFilter: [],
-    uniqueUsers: [],
-    coursesFilter: [],
-    uniqueCourses: [],
     selectedColumns: [
       'userid',
       'courseid',
@@ -168,6 +172,7 @@ export class TeacherView extends Component {
       'target',
       'timecreated',
     ],
+    filters: {},
   };
 
   constructor(props) {
@@ -176,48 +181,37 @@ export class TeacherView extends Component {
     dispatchGetUsers();
   }
 
-  handleActionsFilter = event => {
-    const { options } = event.target;
-    const value = [];
-    for (let i = 0, l = options.length; i < l; i += 1) {
-      if (options[i].selected) {
-        value.push(options[i].value);
-      }
-    }
-    this.setState({
-      actionsFilter: value,
-    });
-  };
-
   /**
    * Prepare filters based on the imported data and persist data to the state.
    * @param {string} sourceUrl where the data is imported from
    * @param {*[]} data where each element shall have at least the following attributes: action, target, userid, courseid
    */
   onImportData = (sourceUrl, data) => {
-    // Create sets for each filtarable column
-    const allActions = [];
-    const allTargets = [];
-    const allUsers = [];
-    const allCourses = [];
-    data.forEach(entry => {
-      allActions.push(entry.action);
-      allTargets.push(entry.target);
-      allUsers.push(entry.userid);
-      allCourses.push(entry.courseid);
+    const allValues = {};
+    availableColumns.forEach(column => {
+      allValues[column] = [];
     });
-    const uniqueActions = [...new Set(allActions)];
-    const uniqueTargets = [...new Set(allTargets)];
-    const uniqueUsers = [...new Set(allUsers)];
-    const uniqueCourses = [...new Set(allCourses)];
+    data.forEach(entry => {
+      // Convert timecreated to readable datetime string
+      entry.timecreated = new Date(entry.timecreated * 1000).toLocaleString(); // eslint-disable-line no-param-reassign
+      // Add all values to the list of possible values for this column
+      availableColumns.forEach(column => {
+        allValues[column].push(entry[column]);
+      });
+    });
+    const filters = {};
+    Object.keys(allValues).forEach(key => {
+      const uniqueValues = [...new Set(allValues[key])];
+      filters[key] = {}; // required befor defining the attributes
+      filters[key].options = uniqueValues;
+      // set initial value to contain all possible values
+      filters[key].selection = uniqueValues;
+    });
     this.setState({
       dataImported: true,
       data,
       dataSource: sourceUrl,
-      uniqueActions,
-      uniqueTargets,
-      uniqueUsers,
-      uniqueCourses,
+      filters,
     });
   };
 
@@ -247,47 +241,25 @@ export class TeacherView extends Component {
    */
   renderCourseLogContent() {
     const { t } = this.props;
-    const {
-      dataImported,
-      data,
-      actionsFilter,
-      usersFilter,
-      targetsFilter,
-      coursesFilter,
-      selectedColumns,
-    } = this.state;
+    const { dataImported, data, selectedColumns, filters } = this.state;
 
     // Construct table rows to print later
     const tableRows = [];
-    const filteredData = data
-      .filter(
-        row => actionsFilter.length === 0 || actionsFilter.includes(row.action),
-      )
-      .filter(
-        row => usersFilter.length === 0 || usersFilter.includes(row.userid),
-      )
-      .filter(
-        row =>
-          coursesFilter.length === 0 || coursesFilter.includes(row.courseid),
-      )
-      .filter(
-        row => targetsFilter.length === 0 || targetsFilter.includes(row.target),
+    // Filter rows that don't pass their filter (if one is set)
+    const filteredData = data.filter(row => {
+      return availableColumns.every(
+        column =>
+          filters[column].selection.length === 0 ||
+          filters[column].selection.includes(row[column]),
       );
+    });
     filteredData.forEach((row, i) => {
       const columns = [];
       selectedColumns.forEach((column, j) => {
         const generatedColumnKey = `row-${String(i)}-column-${String(j)}`;
-        if (column !== 'timecreated') {
-          columns.push(
-            <TableCell key={generatedColumnKey}>{row[column]}</TableCell>,
-          );
-        } else {
-          columns.push(
-            <TableCell key={generatedColumnKey}>
-              {new Date(row[column] * 1000).toLocaleString()}
-            </TableCell>,
-          );
-        }
+        columns.push(
+          <TableCell key={generatedColumnKey}>{row[column]}</TableCell>,
+        );
       });
       const generatdeRowKey = `row-${String(i)}`;
       tableRows.push(<TableRow key={generatdeRowKey}>{columns}</TableRow>);
@@ -319,47 +291,50 @@ export class TeacherView extends Component {
     return output;
   }
 
-  // options must be array that is convertible as string!
   /**
-   * Render a Autocomplete Component configured to work as multi-select.
-   *
-   * The type of values, options and defaultValue should be the same.
-   *
-   * @param {string} labelText - The text displayed besides the input element
-   * @param {string[] | number[]} values - The values currently selected
-   * @param {string[] | number[]} options - The possible options to choose from
-   * @param {function(Object, string[] | number[])} onChange - The function executed
-   *    when an element is added/deleted from the selection
-   * @param {string[] | number[]} [defaultValue=[]] - The default value to be used
+   * Render a filter option for each selected column
    */
-  renderMultiSelect = (
-    labelText,
-    values,
-    options,
-    onChange,
-    defaultValue = [],
-  ) => {
+  renderCourseLogFilters = () => {
     const { t } = this.props;
-    return (
-      <Autocomplete
-        multiple
-        filterSelectedOptions
-        options={options}
-        values={values}
-        onChange={onChange}
-        defaultValue={defaultValue}
-        getOptionLabel={option => String(option)}
-        renderInput={params => (
-          <TextField
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...params}
-            variant="standard"
-            label={labelText}
-            placeholder={t('Select an option')}
-          />
-        )}
-      />
-    );
+    const { selectedColumns, filters } = this.state;
+    const renderedFilters = [];
+    if (Object.keys(filters).length !== 0 && filters.constructor === Object) {
+      selectedColumns.forEach(column => {
+        renderedFilters.push(
+          <Grid item sm={6} md={3} lg={2}>
+            <Autocomplete
+              multiple
+              filterSelectedOptions
+              options={filters[column].options}
+              values={filters[column].selection}
+              onChange={(event, newValue) => {
+                // 1. Make a shallow copy of the items
+                const updatedFilters = { ...filters };
+                // 2. Make a shallow copy of the item you want to mutate
+                const filter = { ...updatedFilters[column] };
+                // 3. Replace the property you're intested in
+                filter.selection = newValue;
+                // 4. Put it back into our array
+                updatedFilters[column] = filter;
+                // 5. Set the state to our new copy
+                this.setState({ filters: updatedFilters });
+              }}
+              getOptionLabel={option => String(option)}
+              renderInput={params => (
+                <TextField
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...params}
+                  variant="standard"
+                  label={column}
+                  placeholder={t('Select an option')}
+                />
+              )}
+            />
+          </Grid>,
+        );
+      });
+    }
+    return renderedFilters;
   };
 
   /**
@@ -367,81 +342,34 @@ export class TeacherView extends Component {
    */
   renderCourseLogConfiguration() {
     const { t } = this.props;
-    const {
-      actionsFilter,
-      uniqueActions,
-      uniqueTargets,
-      targetsFilter,
-      usersFilter,
-      uniqueUsers,
-      coursesFilter,
-      uniqueCourses,
-      selectedColumns,
-    } = this.state;
+    const { selectedColumns } = this.state;
 
     return (
       <Grid container spacing={2}>
         <Grid item sm={12}>
-          {this.renderMultiSelect(
-            t('Columns'),
-            selectedColumns,
-            [
-              'userid',
-              'courseid',
-              'role',
-              'edulevel',
-              'eventname',
-              'action',
-              'target',
-              'relateduserid',
-              'timecreated',
-            ],
-            (event, newValue) => {
+          <Autocomplete
+            multiple
+            filterSelectedOptions
+            options={availableColumns}
+            values={selectedColumns}
+            onChange={(event, newValue) => {
               this.setState({ selectedColumns: newValue });
-            },
-            selectedColumns,
-          )}
+            }}
+            defaultValue={selectedColumns}
+            getOptionLabel={option => option}
+            renderInput={params => (
+              <TextField
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...params}
+                variant="standard"
+                label={t('Columns')}
+                placeholder={t('Select an option')}
+              />
+            )}
+          />
         </Grid>
-        <Grid item sm={6} md={3} lg={2}>
-          {this.renderMultiSelect(
-            t('Actions'),
-            actionsFilter,
-            uniqueActions,
-            (event, newValue) => {
-              this.setState({ actionsFilter: newValue });
-            },
-          )}
-        </Grid>
-        <Grid item sm={6} md={3} lg={2}>
-          {this.renderMultiSelect(
-            t('User'),
-            usersFilter,
-            uniqueUsers,
-            (event, newValue) => {
-              this.setState({ usersFilter: newValue });
-            },
-          )}
-        </Grid>
-        <Grid item sm={6} md={3} lg={2}>
-          {this.renderMultiSelect(
-            t('Target'),
-            targetsFilter,
-            uniqueTargets,
-            (event, newValue) => {
-              this.setState({ targetsFilter: newValue });
-            },
-          )}
-        </Grid>
-        <Grid item sm={6} md={3} lg={2}>
-          {this.renderMultiSelect(
-            t('Courses'),
-            coursesFilter,
-            uniqueCourses,
-            (event, newValue) => {
-              this.setState({ coursesFilter: newValue });
-            },
-          )}
-        </Grid>
+
+        {this.renderCourseLogFilters()}
       </Grid>
     );
   }
