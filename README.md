@@ -1,6 +1,6 @@
 # Graasp App: Moodle
 
-Import your learning interaction data from Moodle to this powerful Graasp Application. It allows you (currently) only to import and filter data. Later, you will be able to perform awsome learning analytics and gain insights into your students behaviour. This will help you to provide a better learning experience and push your students to better learning results.
+Import your learning interaction data from Moodle to this powerful Graasp Application. It allows you (currently) only to import and filter data. Later, you will be able to perform awesome learning analytics and gain insights into your students behavior. This will help you to provide a better learning experience and push your students to better learning results.
 
 ## Getting Started
 
@@ -34,14 +34,14 @@ on `localhost:3636`. Any changes you make should be automatically rendered in th
 
 When accessing the page in the browser, you will see that it's empty and doesn't stop loading.
 This is because you have to provide some additional information as query parameters.
-Try it once with `http://localhost:3000/?spaceId=5b56e70ab253020033364411&appInstanceId=6156e70ab253020033364411&mode=teacher&userId=5b56e70ab253020033364416&dev=true`. You should see know a basic interface with some empty tables.
+Try it once with `http://localhost:3000/?spaceId=5b56e70ab253020033364411&appInstanceId=6156e70ab253020033364411&mode=teacher&userId=5b56e70ab253020033364416&dev=true`. You should see now a basic interface with some empty tables.
 
 ### Configure the Import
 
-Click on the Settings Button in the bottom right hand corner.
+Click on the Settings Button in the bottom right-hand corner.
 Fill out the pop-up with the demanded information and click the "Establish Connection" Button.
 
-- Moodle API Endpoint: the url to your Moodle instance where you installed the [WAFED Web Service Plugin](https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin).
+- Moodle API Endpoint: the URL to your Moodle instance where you installed the [WAFED Web Service Plugin](https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin).
 - Moodle Username: the username which should be used for authentication. Note that only courses will be listed, where the user is enrolled as Teacher (editingteacher)
 - Moodle Password: the password of the user.
 
