@@ -211,12 +211,12 @@ class Settings extends Component {
   };
 
   /**
-   * Renders a Autocomplete Component containing all the available courses.
+   * Renders a Autocomplete Component containing all the available courses and an import button.
    * If the connection is not yet established, a feedback over the progress
    * for the establishement is rendered.
    */
   renderAvailableCourses() {
-    const { t } = this.props;
+    const { t, classes } = this.props;
     const {
       moodleSelectedCourse,
       moodleAvailableCourses,
@@ -228,25 +228,38 @@ class Settings extends Component {
     if (connectionEstablished) {
       if (moodleAvailableCourses.length > 0) {
         output = (
-          <Autocomplete
-            multiple
-            filterSelectedOptions
-            options={moodleAvailableCourses}
-            values={moodleSelectedCourse}
-            onChange={(event, newValue) => {
-              this.setState({ moodleSelectedCourse: newValue });
-            }}
-            getOptionLabel={option => option.shortname}
-            renderInput={params => (
-              <TextField
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...params}
-                variant="standard"
-                label={t('Select Course to Import')}
-                placeholder={t('Select an option')}
-              />
-            )}
-          />
+          <>
+            <Autocomplete
+              id="moodleCourseSelection"
+              multiple
+              filterSelectedOptions
+              options={moodleAvailableCourses}
+              values={moodleSelectedCourse}
+              onChange={(event, newValue) => {
+                this.setState({ moodleSelectedCourse: newValue });
+              }}
+              getOptionLabel={option => option.shortname}
+              renderInput={params => (
+                <TextField
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...params}
+                  variant="standard"
+                  label={t('Select Course to Import')}
+                  placeholder={t('Select an option')}
+                />
+              )}
+            />
+            <Button
+              id="moodleImportCourse"
+              variant="contained"
+              className={classes.button}
+              color="secondary"
+              onClick={this.importCourseData}
+              disabled={moodleSelectedCourse.length === 0}
+            >
+              {t('Import Course Data')}
+            </Button>
+          </>
         );
       } else {
         output = (
@@ -255,30 +268,6 @@ class Settings extends Component {
       }
     } else {
       output = <p>{connectionUserHint}</p>;
-    }
-    return output;
-  }
-
-  /**
-   * Render the import button once the connection is established
-   */
-  renderImportButton() {
-    const { t, classes } = this.props;
-    const { connectionEstablished, moodleSelectedCourse } = this.state;
-
-    let output = '';
-    if (connectionEstablished) {
-      output = (
-        <Button
-          variant="contained"
-          className={classes.button}
-          color="secondary"
-          onClick={this.importCourseData}
-          disabled={moodleSelectedCourse.length === 0}
-        >
-          {t('Import Course Data')}
-        </Button>
-      );
     }
     return output;
   }
@@ -357,6 +346,7 @@ class Settings extends Component {
         />
 
         <Button
+          id="establishConnection"
           variant="contained"
           className={classes.button}
           color={connectionEstablished ? 'primary' : 'secondary'}
@@ -365,14 +355,12 @@ class Settings extends Component {
         >
           {!connectionEstablished
             ? t('Establish Connection')
-            : t('Connection established')}
+            : t('Connection Established')}
         </Button>
 
         <hr />
 
         {this.renderAvailableCourses()}
-
-        {this.renderImportButton()}
 
         <hr />
 
