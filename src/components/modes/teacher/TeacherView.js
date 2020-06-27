@@ -303,6 +303,7 @@ export class TeacherView extends Component {
         renderedFilters.push(
           <Grid item sm={6} md={3} lg={2}>
             <Autocomplete
+              id={`filter-${column}`}
               multiple
               filterSelectedOptions
               options={filters[column].options}
@@ -439,6 +440,7 @@ export class TeacherView extends Component {
 
               <Button
                 color="primary"
+                id="saveAsAppInstanceButton"
                 className={classes.button}
                 disabled={data.length === 0}
                 variant="contained"
