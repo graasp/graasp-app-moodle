@@ -361,6 +361,7 @@ class Settings extends Component {
           className={classes.button}
           color={connectionEstablished ? 'primary' : 'secondary'}
           onClick={this.establishConnection}
+          disabled={moodleApiEndpoint === '' || moodleUsername === ''}
         >
           {!connectionEstablished
             ? t('Establish Connection')
