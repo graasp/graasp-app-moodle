@@ -1,12 +1,10 @@
 {
-  "name": "graasp-app-starter-react",
-  "version": "0.5.4",
+  "name": "graasp-app-moodle",
+  "version": "0.1.0",
   "private": true,
-  "author": "React EPFL",
+  "author": "HEAI-FR",
   "contributors": [
-    "Juan Carlos Farah",
-    "Hassan Abdul Ghaffar",
-    "Mashkour Abdel Aziz"
+    "Uchendu Nwachukwu"
   ],
   "homepage": ".",
   "license": "MIT",
@@ -56,8 +54,8 @@
     "test:ci": "run-s test:coverage report",
     "report": "cat ./coverage/lcov.info | codacy-coverage",
     "eject": "react-scripts eject",
-    "release": "git add CHANGELOG.md && standard-version -a",
-    "release:first": "git add CHANGELOG.md && standard-version -a --first-release"
+    "release": "git fetch --tags && git add CHANGELOG.md && standard-version -a",
+    "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release"
   },
   "devDependencies": {
     "@commitlint/cli": "8.3.5",
