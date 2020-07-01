@@ -169,6 +169,7 @@ export class TeacherView extends Component {
       'role',
       'action',
       'target',
+      'edulevel',
       'timecreated',
     ],
     filters: {},
@@ -304,6 +305,8 @@ export class TeacherView extends Component {
     const renderedFilters = [];
     if (Object.keys(filters).length !== 0 && filters.constructor === Object) {
       selectedColumns.forEach(column => {
+        // Skip the column time created. This would require a more suitable filter solution like a date range selector
+        if (column === 'timecreated') return;
         renderedFilters.push(
           <Grid item sm={6} md={3} lg={2}>
             <Autocomplete
