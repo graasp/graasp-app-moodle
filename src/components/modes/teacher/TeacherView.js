@@ -67,12 +67,12 @@ const renderAppInstanceResources = (
 };
 
 const saveAsAppInstanceResource = (
-  importedData,
+  dataToStore,
   dataSource,
   { dispatchPostAppInstanceResource },
 ) => {
   dispatchPostAppInstanceResource({
-    data: { importedData, source: dataSource },
+    data: { importedData: dataToStore, source: dataSource },
     type: MOODLE_DATA,
     visibility: PUBLIC_VISIBILITY,
   });
@@ -216,6 +216,15 @@ export class TeacherView extends Component {
     });
   };
 
+  rowPassesAllColumnFilters = row => {
+    const { filters } = this.state;
+    return availableColumns.every(
+      column =>
+        filters[column].selection.length === 0 ||
+        filters[column].selection.includes(row[column]),
+    );
+  };
+
   /**
    * Render the Table for the course log
    */
@@ -242,18 +251,12 @@ export class TeacherView extends Component {
    */
   renderCourseLogContent() {
     const { t } = this.props;
-    const { dataImported, data, selectedColumns, filters } = this.state;
+    const { dataImported, data, selectedColumns } = this.state;
 
     // Construct table rows to print later
     const tableRows = [];
     // Filter rows that don't pass a filter (if one is set)
-    const filteredData = data.filter(row => {
-      return availableColumns.every(
-        column =>
-          filters[column].selection.length === 0 ||
-          filters[column].selection.includes(row[column]),
-      );
-    });
+    const filteredData = data.filter(this.rowPassesAllColumnFilters);
     filteredData.forEach((row, i) => {
       const columns = [];
       selectedColumns.forEach((column, j) => {
@@ -425,10 +428,9 @@ export class TeacherView extends Component {
             </Typography>
             <Paper className={classes.root}>
               {this.renderCourseLogConfiguration()}
-
               <Button
                 color="primary"
-                id="saveAsAppInstanceButton"
+                id="saveRawAsAppInstanceResourceButton"
                 className={classes.button}
                 disabled={data.length === 0}
                 variant="contained"
@@ -436,9 +438,24 @@ export class TeacherView extends Component {
                   saveAsAppInstanceResource(data, dataSource, this.props);
                 }}
               >
-                {t('Save as App Instance')}
+                {t('Save Raw')}
               </Button>
-
+              <Button
+                color="primary"
+                id="saveFilteredAsAppInstanceResourceButton"
+                className={classes.button}
+                disabled={data.length === 0}
+                variant="contained"
+                onClick={() => {
+                  saveAsAppInstanceResource(
+                    data.filter(this.rowPassesAllColumnFilters),
+                    dataSource,
+                    this.props,
+                  );
+                }}
+              >
+                {t('Save Filtered')}
+              </Button>
               {this.renderCourseLog()}
             </Paper>
           </Grid>

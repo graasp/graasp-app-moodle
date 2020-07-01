@@ -66,7 +66,7 @@ describe('Import Data from Moodle', () => {
   });
 
   it('Saves the Imported Data as App Instance Resource', () => {
-    cy.get('#saveAsAppInstanceButton').click();
+    cy.get('#saveRawAsAppInstanceResourceButton').click();
     cy.get('table')
       .find('td')
       .contains(APP_INSTANCE_ID)
