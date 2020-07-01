@@ -72,5 +72,7 @@ describe('Import Data from Moodle', () => {
       .contains(APP_INSTANCE_ID)
       .next()
       .contains(MOODLE_API_ENDPOINT);
+    // delete it again
+    cy.get('.deleteAppInstanceButton').click({ multiple: true });
   });
 });
