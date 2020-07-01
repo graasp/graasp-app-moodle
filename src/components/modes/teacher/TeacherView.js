@@ -112,9 +112,12 @@ export class TeacherView extends Component {
         // we need to specify number to avoid warnings with local server
         _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         appInstanceId: PropTypes.string,
+        /* eslint-disable react/forbid-prop-types */
         data: PropTypes.object,
+        /* eslint-enable react/forbid-prop-types */
       }),
     ),
+
     // the import settings
     settings: PropTypes.shape({
       moodleApiEndpoint: PropTypes.string,
@@ -127,7 +130,7 @@ export class TeacherView extends Component {
     appInstanceResources: [],
   };
 
-  static styles = theme => ({
+  static styles = (theme) => ({
     root: {
       width: '100%',
       marginTop: theme.spacing(3),
@@ -188,19 +191,19 @@ export class TeacherView extends Component {
    */
   onImportData = (sourceUrl, data) => {
     const allValues = {};
-    availableColumns.forEach(column => {
+    availableColumns.forEach((column) => {
       allValues[column] = [];
     });
-    data.forEach(entry => {
+    data.forEach((entry) => {
       // Convert timecreated to readable datetime string
       entry.timecreated = new Date(entry.timecreated * 1000).toLocaleString(); // eslint-disable-line no-param-reassign
       // Add all values to the list of possible values for this column
-      availableColumns.forEach(column => {
+      availableColumns.forEach((column) => {
         allValues[column].push(entry[column]);
       });
     });
     const filters = {};
-    Object.keys(allValues).forEach(key => {
+    Object.keys(allValues).forEach((key) => {
       const uniqueValues = [...new Set(allValues[key])];
       filters[key] = {}; // required befor defining the attributes
       filters[key].options = uniqueValues;
@@ -222,7 +225,7 @@ export class TeacherView extends Component {
     const { classes } = this.props;
     const { selectedColumns } = this.state;
     const headers = [];
-    selectedColumns.forEach(column => {
+    selectedColumns.forEach((column) => {
       headers.push(<TableCell key={`column-${column}`}>{column}</TableCell>);
     });
     return (
@@ -246,9 +249,9 @@ export class TeacherView extends Component {
     // Construct table rows to print later
     const tableRows = [];
     // Filter rows that don't pass their filter (if one is set)
-    const filteredData = data.filter(row => {
+    const filteredData = data.filter((row) => {
       return availableColumns.every(
-        column =>
+        (column) =>
           filters[column].selection.length === 0 ||
           filters[column].selection.includes(row[column]),
       );
@@ -299,7 +302,7 @@ export class TeacherView extends Component {
     const { selectedColumns, filters } = this.state;
     const renderedFilters = [];
     if (Object.keys(filters).length !== 0 && filters.constructor === Object) {
-      selectedColumns.forEach(column => {
+      selectedColumns.forEach((column) => {
         renderedFilters.push(
           <Grid item sm={6} md={3} lg={2}>
             <Autocomplete
@@ -320,8 +323,8 @@ export class TeacherView extends Component {
                 // 5. Set the state to our new copy
                 this.setState({ filters: updatedFilters });
               }}
-              getOptionLabel={option => String(option)}
-              renderInput={params => (
+              getOptionLabel={(option) => String(option)}
+              renderInput={(params) => (
                 <TextField
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
@@ -357,8 +360,8 @@ export class TeacherView extends Component {
               this.setState({ selectedColumns: newValue });
             }}
             defaultValue={selectedColumns}
-            getOptionLabel={option => option}
-            renderInput={params => (
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
               <TextField
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...params}
