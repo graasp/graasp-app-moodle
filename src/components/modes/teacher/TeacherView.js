@@ -120,9 +120,12 @@ export class TeacherView extends Component {
         // we need to specify number to avoid warnings with local server
         _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         appInstanceId: PropTypes.string,
+        /* eslint-disable react/forbid-prop-types */
         data: PropTypes.object,
+        /* eslint-enable react/forbid-prop-types */
       }),
     ),
+
     // the import settings
     settings: PropTypes.shape({
       moodleApiEndpoint: PropTypes.string,
