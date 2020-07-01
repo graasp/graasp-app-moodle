@@ -13,6 +13,8 @@ describe('Import Data from Moodle', () => {
     cy.contains('No data imported yet');
   });
 
+  it('Delete saved resources (if any)', () => {});
+
   it('Establish a Connection', () => {
     cy.get('button[aria-label="Settings"]').click();
     cy.get('#establishConnection').as('establishConnectionButton');
@@ -66,6 +68,15 @@ describe('Import Data from Moodle', () => {
   });
 
   it('Saves the Imported Data as App Instance Resource', () => {
+    /* 
+      first, delete any possible ressources. This is action is performed just at
+      this stage, because resources are loadad async. And if placed at the very 
+      beginning of the test, they aren't present yet.
+    */
+    if (document.getElementsByClassName('deleteAppInstanceButton').length > 0) {
+      cy.get('.deleteAppInstanceButton').click({ multiple: true });
+    }
+    // then, save the current data
     cy.get('#saveRawAsAppInstanceResourceButton').click();
     cy.get('table')
       .find('td')
