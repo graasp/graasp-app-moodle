@@ -400,7 +400,7 @@ export class TeacherView extends Component {
               color="inherit"
               className={classes.sectionTitle}
             >
-              {t('This table illustrates the saved resources on the server.')}
+              {t('Saved Resources')}
             </Typography>
             <Paper className={classes.root}>
               <Table className={classes.table}>
@@ -424,7 +424,7 @@ export class TeacherView extends Component {
               color="inherit"
               className={classes.sectionTitle}
             >
-              {t('This table shows the sample output of the imported data')}
+              {t('Working Data')}
             </Typography>
             <Paper className={classes.root}>
               {this.renderCourseLogConfiguration()}
