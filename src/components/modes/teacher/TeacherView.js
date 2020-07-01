@@ -246,7 +246,7 @@ export class TeacherView extends Component {
 
     // Construct table rows to print later
     const tableRows = [];
-    // Filter rows that don't pass their filter (if one is set)
+    // Filter rows that don't pass a filter (if one is set)
     const filteredData = data.filter(row => {
       return availableColumns.every(
         column =>
