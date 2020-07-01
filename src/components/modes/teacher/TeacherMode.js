@@ -4,20 +4,17 @@ import { connect } from 'react-redux';
 import TeacherView from './TeacherView';
 import { DEFAULT_VIEW, DASHBOARD_VIEW } from '../../../config/views';
 import { getAppInstanceResources } from '../../../actions';
-import Loader from '../../common/Loader';
 
 class TeacherMode extends Component {
   static propTypes = {
     appInstanceId: PropTypes.string,
     view: PropTypes.string,
-    activity: PropTypes.bool,
     dispatchGetAppInstanceResources: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     view: 'normal',
     appInstanceId: null,
-    activity: false,
   };
 
   constructor(props) {
@@ -36,10 +33,7 @@ class TeacherMode extends Component {
   }
 
   render() {
-    const { view, activity } = this.props;
-    if (activity) {
-      return <Loader />;
-    }
+    const { view } = this.props;
     switch (view) {
       case DASHBOARD_VIEW:
       case DEFAULT_VIEW:
