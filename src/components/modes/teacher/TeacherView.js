@@ -16,6 +16,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
@@ -43,7 +45,7 @@ const renderAppInstanceResources = (
   if (!appInstanceResources.length) {
     return (
       <TableRow>
-        <TableCell colSpan={5}>No App Instance Resources</TableCell>
+        <TableCell colSpan={6}>No App Instance Resources</TableCell>
       </TableRow>
     );
   }
@@ -54,6 +56,7 @@ const renderAppInstanceResources = (
       <TableCell>{appInstance}</TableCell>
       <TableCell>{data.source}</TableCell>
       <TableCell>{data.importedData.length}</TableCell>
+      <TableCell>{data.filtered ? <CheckIcon /> : <ClearIcon />}</TableCell>
       <TableCell>
         <IconButton
           color="primary"
@@ -70,10 +73,15 @@ const renderAppInstanceResources = (
 const saveAsAppInstanceResource = (
   dataToStore,
   dataSource,
+  isDataFiltered,
   { dispatchPostAppInstanceResource },
 ) => {
   dispatchPostAppInstanceResource({
-    data: { importedData: dataToStore, source: dataSource },
+    data: {
+      importedData: dataToStore,
+      source: dataSource,
+      filtered: isDataFiltered,
+    },
     type: MOODLE_DATA,
     visibility: PUBLIC_VISIBILITY,
   });
@@ -305,14 +313,13 @@ export class TeacherView extends Component {
     const { selectedColumns, filters } = this.state;
     const renderedFilters = [];
     if (Object.keys(filters).length !== 0 && filters.constructor === Object) {
-      selectedColumns.forEach((column, index) => {
+      selectedColumns.forEach(column => {
         // Skip the column time created. This would require a more suitable filter solution like a date range selector
         if (column === 'timecreated') return;
         renderedFilters.push(
-          <Grid item sm={6} md={3} lg={2}>
+          <Grid item sm={6} md={3} lg={2} key={`filter-${column}`}>
             <Autocomplete
               id={`filter-${column}`}
-              key={`filter-${String(index)}`}
               multiple
               filterSelectedOptions
               options={filters[column].options}
@@ -415,6 +422,7 @@ export class TeacherView extends Component {
                     <TableCell>App Instance</TableCell>
                     <TableCell>Source</TableCell>
                     <TableCell>Data Entries</TableCell>
+                    <TableCell>Filtered</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -440,7 +448,12 @@ export class TeacherView extends Component {
                 disabled={data.length === 0}
                 variant="contained"
                 onClick={() => {
-                  saveAsAppInstanceResource(data, dataSource, this.props);
+                  saveAsAppInstanceResource(
+                    data,
+                    dataSource,
+                    false,
+                    this.props,
+                  );
                 }}
               >
                 {t('Save Raw')}
@@ -455,6 +468,7 @@ export class TeacherView extends Component {
                   saveAsAppInstanceResource(
                     data.filter(this.rowPassesAllColumnFilters),
                     dataSource,
+                    true,
                     this.props,
                   );
                 }}
