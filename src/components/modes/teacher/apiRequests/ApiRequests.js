@@ -39,7 +39,7 @@ class ApiRequests {
    * @param {(string|number)[]} selectedCourses
    * @returns {*} the exported data
    */
-  async getCourseData() {
+  async getCourseData(selectedCourses) {
     throw new Error("Method 'getCourseData()' must be implemented.");
   }
 }
