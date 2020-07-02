@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { closeSettings, patchAppInstance } from '../../../actions';
 import Loader from '../../common/Loader';
+import moodleApiRequests from './MoodleApiRequests';
 
 function getModalStyle() {
   const top = 50;
@@ -25,7 +26,7 @@ function getModalStyle() {
   };
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   paper: {
     position: 'absolute',
     width: theme.spacing(50),
@@ -58,6 +59,7 @@ class Settings extends Component {
     const connectionEstablished = false;
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
+    const apiRequests = moodleApiRequests;
     return {
       moodleApiEndpoint,
       moodleUsername,
@@ -67,6 +69,7 @@ class Settings extends Component {
       connectionEstablished,
       moodleApiToken,
       connectionUserHint,
+      apiRequests,
     };
   })();
 
@@ -93,7 +96,7 @@ class Settings extends Component {
     onImportData: PropTypes.func.isRequired,
   };
 
-  saveSettings = settingsToChange => {
+  saveSettings = (settingsToChange) => {
     const { settings, dispatchPatchAppInstance } = this.props;
     const newSettings = {
       ...settings,
@@ -119,15 +122,15 @@ class Settings extends Component {
     this.saveSettings(settingsToChange);
   };
 
-  handleMoodleApiChange = event => {
+  handleMoodleApiChange = (event) => {
     this.setState({ moodleApiEndpoint: event.target.value });
   };
 
-  handleMoodleUsernameChange = event => {
+  handleMoodleUsernameChange = (event) => {
     this.setState({ moodleUsername: event.target.value });
   };
 
-  handleMoodlePasswordChange = event => {
+  handleMoodlePasswordChange = (event) => {
     this.setState({ moodlePassword: event.target.value });
   };
 
@@ -137,77 +140,55 @@ class Settings extends Component {
    * If connection is successfully established, getAvailableCourses() is executed.
    * Else, the connectionUserHint is updated with an error related message.
    */
-  establishConnection = () => {
-    const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
+  establishConnection = async () => {
     const { t } = this.props;
-    // the name of the web service in moodle, which will then be used for the export/import of data
-    const moodleService = 'wafed_webservices';
-    const moodleTokenEndpoint = `${moodleApiEndpoint}login/token.php?username=${moodleUsername}&password=${moodlePassword}&service=${moodleService}`;
-    // get the token to be authenticated later
-    fetch(moodleTokenEndpoint)
-      .then(response => response.json())
-      .then(data => {
-        if (data.token) {
-          this.setState({
-            moodleApiToken: data.token,
-          });
-          this.getAvailableCourses();
-        } else if (data.errorcode === 'invalidlogin') {
-          // Display wrong login credential error message
-          this.setState({
-            connectionUserHint: t('Invalid login credentials'),
-            connectionEstablished: false,
-          });
-        } else {
-          // Display generic error during request
-          this.setState({
-            connectionUserHint: t(
-              'Problem establishing the connection, maybe a wrong configuration in Moodle or a typo in the API endpoint?',
-            ),
-            connectionEstablished: false,
-          });
-        }
-      });
-  };
+    const {
+      moodleApiEndpoint,
+      moodleUsername,
+      moodlePassword,
+      apiRequests,
+    } = this.state;
 
-  /**
-   * Get a list of all available courses for this user.
-   * The result is stored in the state of the component.
-   */
-  getAvailableCourses = () => {
-    const { moodleApiEndpoint, moodleApiToken } = this.state;
-    const moodleAvailableCoursesEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_available_courses&moodlewsrestformat=json`;
-    fetch(moodleAvailableCoursesEndpoint)
-      .then(res => res.json())
-      .then(res => {
+    const requestSucceeded = await apiRequests.getToken(
+      moodleApiEndpoint,
+      moodleUsername,
+      moodlePassword,
+    );
+    if (requestSucceeded) {
+      console.log('Passed');
+      const availableCourses = await apiRequests.getAvailableCourses();
+      if (availableCourses) {
         this.setState({
           connectionEstablished: true,
-          moodleAvailableCourses: res,
+          moodleAvailableCourses: availableCourses,
         });
+      }
+    } else {
+      this.setState({
+        connectionUserHint: t(
+          'Problem establishing the connection, maybe a wrong configuration in Moodle or a typo in the API endpoint?',
+        ),
+        connectionEstablished: false,
       });
+    }
   };
 
   /**
    * Load data for selected courses through API.
    * Calls the callback passed in by the parant component.
    */
-  importCourseData = () => {
+  importCourseData = async () => {
     const { onImportData } = this.props;
-    const {
-      moodleApiEndpoint,
-      moodleSelectedCourse,
-      moodleApiToken,
-    } = this.state;
-    // preapre query params
-    let courseParams = '';
-    moodleSelectedCourse.forEach((course, index) => {
-      courseParams += `&courseids[${index}]=${course.courseid}`;
-    });
-    const moodleDataExportEndpoint = `${moodleApiEndpoint}/webservice/rest/server.php?wstoken=${moodleApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_course_data&moodlewsrestformat=json${courseParams}`;
-    fetch(moodleDataExportEndpoint)
-      .then(response => response.json())
-      .then(data => onImportData(moodleApiEndpoint, data))
-      .then(() => this.handleClose());
+    const { moodleSelectedCourse, apiRequests } = this.state;
+
+    const result = await apiRequests.getCourseData(moodleSelectedCourse);
+    if (result) {
+      const { currentApiEndpoint, data } = result;
+      onImportData(currentApiEndpoint, data);
+      this.handleClose();
+    } else {
+      console.error('A problem occured when importing the data');
+    }
   };
 
   /**
@@ -238,8 +219,8 @@ class Settings extends Component {
               onChange={(event, newValue) => {
                 this.setState({ moodleSelectedCourse: newValue });
               }}
-              getOptionLabel={option => option.shortname}
-              renderInput={params => (
+              getOptionLabel={(option) => option.shortname}
+              renderInput={(params) => (
                 <TextField
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
