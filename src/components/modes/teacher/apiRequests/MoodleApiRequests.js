@@ -1,12 +1,8 @@
-// TODO: insert the structure defined in the report for a strategy
+import ApiRequests from './ApiRequests';
 /**
  * Will be set once the connection is established.
  */
-let currentApiToken = '';
-let currentApiEndpoint = '';
-const moodleApiRequests = {
-  // WE COULD PASS ON FAILURE METHODS TO HANDLE THE CASE WHERE CONNECTION CANT BE ESTABLISHED ETC.
-
+class MoodleApiRequests extends ApiRequests {
   /**
    * Get a token for future authentication and store it locally.
    * @param {string} apiEndpoint which should be used to send this and the following requests to
@@ -14,7 +10,7 @@ const moodleApiRequests = {
    * @param {string} password used for authentication
    * @returns {boolean} true if succeeded and false if not
    */
-  getToken: async (apiEndpoint, username, password) => {
+  async getToken(apiEndpoint, username, password) {
     // the name of the web service in moodle, which will then be used for the export/import of data
     const moodleService = 'wafed_webservices';
     const moodleTokenEndpoint = `${apiEndpoint}login/token.php?username=${username}&password=${password}&service=${moodleService}`;
@@ -23,8 +19,8 @@ const moodleApiRequests = {
       .then((response) => response.json())
       .then((data) => {
         if (data.token) {
-          currentApiToken = data.token;
-          currentApiEndpoint = apiEndpoint;
+          this.currentApiToken = data.token;
+          this.currentApiEndpoint = apiEndpoint;
           return true;
         }
         return false;
@@ -33,17 +29,17 @@ const moodleApiRequests = {
         console.error('Error:', error);
         return false;
       });
-  },
+  }
 
   /**
    * Get a list of all available courses for this user.
    * The result is stored in the state of the component.
    * @returns {(string|number)[]} a list of ids of available courses
    */
-  getAvailableCourses: async () => {
+  async getAvailableCourses() {
     const wsFunction =
       'local_wafed_moodle_webservice_plugin_get_available_courses';
-    const moodleAvailableCoursesEndpoint = `${currentApiEndpoint}/webservice/rest/server.php?wstoken=${currentApiToken}&wsfunction=${wsFunction}&moodlewsrestformat=json`;
+    const moodleAvailableCoursesEndpoint = `${this.currentApiEndpoint}/webservice/rest/server.php?wstoken=${this.currentApiToken}&wsfunction=${wsFunction}&moodlewsrestformat=json`;
     return fetch(moodleAvailableCoursesEndpoint)
       .then((res) => res.json())
       .then((res) => {
@@ -53,7 +49,7 @@ const moodleApiRequests = {
         console.error('Error:', error);
         return false;
       });
-  },
+  }
 
   /**
    * Load data for selected courses through API.
@@ -61,22 +57,23 @@ const moodleApiRequests = {
    * @param {(string|number)[]} selectedCourses
    * @returns {*} the exported data
    */
-  getCourseData: async (selectedCourses) => {
+  async getCourseData(selectedCourses) {
     let courseParams = '';
     selectedCourses.forEach((course, index) => {
       courseParams += `&courseids[${index}]=${course.courseid}`;
     });
-    const moodleDataExportEndpoint = `${currentApiEndpoint}/webservice/rest/server.php?wstoken=${currentApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_course_data&moodlewsrestformat=json${courseParams}`;
+    const moodleDataExportEndpoint = `${this.currentApiEndpoint}/webservice/rest/server.php?wstoken=${this.currentApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_course_data&moodlewsrestformat=json${courseParams}`;
+    const sourceUrl = this.currentApiEndpoint;
     return fetch(moodleDataExportEndpoint)
       .then((response) => response.json())
       .then((data) => {
-        return { currentApiEndpoint, data };
+        return { sourceUrl, data };
       })
       .catch((error) => {
         console.error('Error:', error);
         return false;
       });
-  },
-};
+  }
+}
 
-export default moodleApiRequests;
+export default MoodleApiRequests;
