@@ -34,7 +34,6 @@ class ApiRequests {
 
   /**
    * Load data for selected courses through API.
-   * Calls the callback passed in by the parant component.
    * @param {(string|number)[]} selectedCourses
    * @returns {*} the exported data
    */
