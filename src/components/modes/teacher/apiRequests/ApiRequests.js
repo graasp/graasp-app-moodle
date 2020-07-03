@@ -26,7 +26,6 @@ class ApiRequests {
 
   /**
    * Get a list of all available courses for this user.
-   * The result is stored in the state of the component.
    * @returns {(string|number)[]} a list of ids of available courses
    */
   async getAvailableCourses() {
