@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { closeSettings, patchAppInstance } from '../../../actions';
 import Loader from '../../common/Loader';
-import MoodleApiRequests from './apiRequests/MoodleApiRequests';
+import MoodleApiRequests from '../../../apiRequests/MoodleApiRequests';
 
 function getModalStyle() {
   const top = 50;
