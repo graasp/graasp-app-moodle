@@ -12,16 +12,13 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CheckIcon from '@material-ui/icons/Check';
-import ClearIcon from '@material-ui/icons/Clear';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
 import './TeacherView.css';
+import SavedAppInstancesResourcesTable from './SavedAppInstancesResourcesTable';
 import {
   postAppInstanceResource,
   deleteAppInstanceResource,
@@ -30,45 +27,6 @@ import {
 import { getUsers } from '../../../actions/users';
 import Settings from './Settings';
 import { PUBLIC_VISIBILITY } from '../../../config/settings';
-
-/**
- * helper method to render the rows of the app instance resource table
- * @param appInstanceResources
- * @param dispatchDeleteAppInstanceResource
- * @returns {*}
- */
-const renderAppInstanceResources = (
-  appInstanceResources,
-  { dispatchDeleteAppInstanceResource },
-) => {
-  // if there are no resources, show an empty table
-  if (!appInstanceResources.length) {
-    return (
-      <TableRow>
-        <TableCell colSpan={6}>No App Instance Resources</TableCell>
-      </TableRow>
-    );
-  }
-  // map each app instance resource to a row in the table
-  return appInstanceResources.map(({ _id, appInstance, data }) => (
-    <TableRow key={_id}>
-      <TableCell scope="row">{_id}</TableCell>
-      <TableCell>{appInstance}</TableCell>
-      <TableCell>{data.source}</TableCell>
-      <TableCell>{data.importedData.length}</TableCell>
-      <TableCell>{data.filtered ? <CheckIcon /> : <ClearIcon />}</TableCell>
-      <TableCell>
-        <IconButton
-          color="primary"
-          className="deleteAppInstanceButton"
-          onClick={() => dispatchDeleteAppInstanceResource(_id)}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ));
-};
 
 const saveAsAppInstanceResource = (
   dataToStore,
@@ -399,44 +357,13 @@ export class TeacherView extends Component {
 
   render() {
     // extract properties from the props object
-    const {
-      // this property allows us to do styling and is injected by withStyles
-      classes,
-      // this property allows us to do translations and is injected by i18next
-      t,
-      // these properties are injected by the redux mapStateToProps method
-      appInstanceResources,
-      dispatchOpenSettings,
-    } = this.props;
+    const { classes, t, dispatchOpenSettings } = this.props;
     const { data, dataSource } = this.state;
     return (
       <>
         <Grid container spacing={0}>
           <Grid item xs={12} className={classes.main}>
-            <Typography
-              variant="h6"
-              color="inherit"
-              className={classes.sectionTitle}
-            >
-              {t('Saved Resources')}
-            </Typography>
-            <Paper className={classes.root}>
-              <Table className={classes.table}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>App Instance</TableCell>
-                    <TableCell>Source</TableCell>
-                    <TableCell>Data Entries</TableCell>
-                    <TableCell>Filtered</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {renderAppInstanceResources(appInstanceResources, this.props)}
-                </TableBody>
-              </Table>
-            </Paper>
+            <SavedAppInstancesResourcesTable />
 
             <Typography
               variant="h6"
