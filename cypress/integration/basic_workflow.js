@@ -10,7 +10,7 @@ const GRAASP_TEACHER_APP_URL = `${GRAASP_URL}?spaceId=5b56e70ab253020033364411&a
 describe('Import Data from Moodle', () => {
   it('Open the Graasp App', () => {
     cy.visit(GRAASP_TEACHER_APP_URL);
-    cy.contains('No data imported yet');
+    cy.contains('No imported or data matching the filter criterion');
   });
 
   it('Establish a Connection', () => {

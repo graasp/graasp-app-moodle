@@ -2,13 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import Fab from '@material-ui/core/Fab';
 import SettingsIcon from '@material-ui/icons/Settings';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -18,6 +13,7 @@ import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
 import './TeacherView.css';
+import DataTable from './DataTable';
 import SavedAppInstancesResourcesTable from './SavedAppInstancesResourcesTable';
 import {
   postAppInstanceResource,
@@ -139,7 +135,6 @@ export class TeacherView extends Component {
   });
 
   state = {
-    dataImported: false,
     data: [],
     dataSource: '',
     selectedColumns: defaultSelectedColumns,
@@ -183,91 +178,26 @@ export class TeacherView extends Component {
       filters[key].selection = uniqueValues;
     });
     this.setState({
-      dataImported: true,
       data,
       dataSource: sourceUrl,
       filters,
     });
   };
 
-  rowPassesAllColumnFilters = (row) => {
+  /**
+   * Fillter the dataset by checking each column and its corresponding filter
+   * @param {*} data
+   */
+  filterRows = (data) => {
     const { filters } = this.state;
-    return availableColumns.every(
-      (column) =>
-        filters[column].selection.length === 0 ||
-        filters[column].selection.includes(row[column]),
+    return data.filter((row) =>
+      availableColumns.every(
+        (column) =>
+          filters[column].selection.length === 0 ||
+          filters[column].selection.includes(row[column]),
+      ),
     );
   };
-
-  /**
-   * Render the Table for the course log
-   */
-  renderCourseLog() {
-    const { classes } = this.props;
-    const { selectedColumns } = this.state;
-    const headers = [];
-    selectedColumns.forEach((column) => {
-      headers.push(<TableCell key={`column-${column}`}>{column}</TableCell>);
-    });
-    return (
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>{headers}</TableRow>
-        </TableHead>
-        {this.renderCourseLogContent()}
-      </Table>
-    );
-  }
-
-  /**
-   * Render the actual TableBody with selected columns and applied filters.
-   * If no data is imported yet or no data matches the filter criterion, a specific message is displayed.
-   */
-  renderCourseLogContent() {
-    const { t } = this.props;
-    const { dataImported, data, selectedColumns } = this.state;
-
-    // Construct table rows to print later
-    const tableRows = [];
-    // Filter rows that don't pass a filter (if one is set)
-    const filteredData = data.filter(this.rowPassesAllColumnFilters);
-    filteredData.forEach((row, i) => {
-      const columns = [];
-      selectedColumns.forEach((column, j) => {
-        const generatedColumnKey = `row-${String(i)}-column-${String(j)}`;
-        columns.push(
-          <TableCell key={generatedColumnKey}>{row[column]}</TableCell>,
-        );
-      });
-      const generatdeRowKey = `row-${String(i)}`;
-      tableRows.push(<TableRow key={generatdeRowKey}>{columns}</TableRow>);
-    });
-    let output = '';
-    if (dataImported) {
-      if (filteredData.length > 0) {
-        output = <TableBody>{tableRows}</TableBody>;
-      } else {
-        output = (
-          <TableBody>
-            <TableRow>
-              <TableCell colSpan={4}>
-                {t('No data matching the filter criterion')}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        );
-      }
-    } else {
-      output = (
-        <TableBody>
-          <TableRow>
-            <TableCell colSpan={4}>{t('No data imported yet')}</TableCell>
-          </TableRow>
-        </TableBody>
-      );
-    }
-    return output;
-  }
 
   /**
    * Render a filter option for each selected column
@@ -358,7 +288,7 @@ export class TeacherView extends Component {
   render() {
     // extract properties from the props object
     const { classes, t, dispatchOpenSettings } = this.props;
-    const { data, dataSource } = this.state;
+    const { data, dataSource, selectedColumns } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -389,7 +319,7 @@ export class TeacherView extends Component {
                   );
                 }}
               >
-                {t('Save Raw')}
+                {t('Save Unfiltered')}
               </Button>
               <Button
                 color="primary"
@@ -399,7 +329,7 @@ export class TeacherView extends Component {
                 variant="contained"
                 onClick={() => {
                   saveAsAppInstanceResource(
-                    data.filter(this.rowPassesAllColumnFilters),
+                    this.filterRows(data),
                     dataSource,
                     true,
                     this.props,
@@ -408,7 +338,11 @@ export class TeacherView extends Component {
               >
                 {t('Save Filtered')}
               </Button>
-              {this.renderCourseLog()}
+
+              <DataTable
+                data={this.filterRows(data)}
+                selectedColumns={selectedColumns}
+              />
             </Paper>
           </Grid>
         </Grid>
