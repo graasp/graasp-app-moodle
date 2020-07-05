@@ -21,7 +21,7 @@ class Header extends Component {
     spaceId: PropTypes.string,
   };
 
-  static styles = theme => ({
+  static styles = (theme) => ({
     root: {
       flexGrow: 1,
     },
@@ -79,7 +79,7 @@ class Header extends Component {
           <Toolbar>
             <Logo className={classes.logo} />
             <Typography variant="h6" color="inherit" className={classes.grow}>
-              {t('Graasp App Starter')}
+              {t('Graasp App Moodle')}
             </Typography>
             {this.renderSpaceLink()}
             {this.renderAppInstanceLink()}
