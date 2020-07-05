@@ -11,9 +11,9 @@ import { showErrorToast } from '../utils/toasts';
 
 const DEFAULT_SETTINGS = {
   headerVisible: false,
-  apiEndpoint: 'http://localhost:80/moodle/',
-  username: 'teacher',
-  password: 'teacher', // Attention: if stored like that it's in clear text in the redux state.
+  apiEndpoint: '',
+  username: '',
+  password: '',
 };
 
 const INITIAL_STATE = {
