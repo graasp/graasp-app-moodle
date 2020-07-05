@@ -137,9 +137,9 @@ export class TeacherView extends Component {
 
     // the import settings
     settings: PropTypes.shape({
-      moodleApiEndpoint: PropTypes.string,
-      moodleUsername: PropTypes.string,
-      moodlePassword: PropTypes.string,
+      apiEndpoint: PropTypes.string,
+      username: PropTypes.string,
+      password: PropTypes.string,
     }).isRequired,
   };
 
@@ -200,6 +200,8 @@ export class TeacherView extends Component {
    * @param {*[]} data where each element shall have at least the following attributes: action, target, userid, courseid
    */
   onImportData = (sourceUrl, data) => {
+    console.log(sourceUrl);
+    console.log(data);
     const allValues = {};
     availableColumns.forEach((column) => {
       allValues[column] = [];
@@ -484,11 +486,7 @@ export class TeacherView extends Component {
           </Grid>
         </Grid>
 
-        <Settings
-          onImportData={(source, importedData) => {
-            this.onImportData(source, importedData);
-          }}
-        />
+        <Settings onImportData={this.onImportData} />
         <Fab
           color="primary"
           aria-label={t('Settings')}

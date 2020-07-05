@@ -51,23 +51,21 @@ const styles = (theme) => ({
 class Settings extends Component {
   state = (() => {
     const { settings } = this.props;
-    const { moodleApiEndpoint, moodleUsername, moodlePassword } = settings;
+    const { apiEndpoint, username, password } = settings;
 
-    const moodleApiToken = '';
-    const moodleAvailableCourses = [];
-    const moodleSelectedCourse = [];
+    const availableCourses = [];
+    const selectedCourse = [];
     const connectionEstablished = false;
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
     const apiRequests = new MoodleApiRequests();
     return {
-      moodleApiEndpoint,
-      moodleUsername,
-      moodlePassword,
-      moodleAvailableCourses,
-      moodleSelectedCourse,
+      apiEndpoint,
+      username,
+      password,
+      availableCourses,
+      selectedCourse,
       connectionEstablished,
-      moodleApiToken,
       connectionUserHint,
       apiRequests,
     };
@@ -83,9 +81,9 @@ class Settings extends Component {
     open: PropTypes.bool.isRequired,
     activity: PropTypes.bool.isRequired,
     settings: PropTypes.shape({
-      moodleApiEndpoint: PropTypes.string,
-      moodleUsername: PropTypes.string,
-      moodlePassword: PropTypes.string,
+      apiEndpoint: PropTypes.string,
+      username: PropTypes.string,
+      password: PropTypes.string,
     }).isRequired,
     t: PropTypes.func.isRequired,
     dispatchCloseSettings: PropTypes.func.isRequired,
@@ -113,25 +111,25 @@ class Settings extends Component {
   };
 
   handleSave = () => {
-    const { moodleApiEndpoint, moodleUsername, moodlePassword } = this.state;
+    const { apiEndpoint, username, password } = this.state;
     const settingsToChange = {
-      moodleApiEndpoint,
-      moodleUsername,
-      moodlePassword,
+      apiEndpoint,
+      username,
+      password,
     };
     this.saveSettings(settingsToChange);
   };
 
-  handleMoodleApiChange = (event) => {
-    this.setState({ moodleApiEndpoint: event.target.value });
+  handleApiEndpointChange = (event) => {
+    this.setState({ apiEndpoint: event.target.value });
   };
 
-  handleMoodleUsernameChange = (event) => {
-    this.setState({ moodleUsername: event.target.value });
+  handleUsernameChange = (event) => {
+    this.setState({ username: event.target.value });
   };
 
-  handleMoodlePasswordChange = (event) => {
-    this.setState({ moodlePassword: event.target.value });
+  handlePasswordChange = (event) => {
+    this.setState({ password: event.target.value });
   };
 
   /**
@@ -142,31 +140,25 @@ class Settings extends Component {
    */
   establishConnection = async () => {
     const { t } = this.props;
-    const {
-      moodleApiEndpoint,
-      moodleUsername,
-      moodlePassword,
-      apiRequests,
-    } = this.state;
+    const { apiEndpoint, username, password, apiRequests } = this.state;
 
     const requestSucceeded = await apiRequests.getToken(
-      moodleApiEndpoint,
-      moodleUsername,
-      moodlePassword,
+      apiEndpoint,
+      username,
+      password,
     );
     if (requestSucceeded) {
-      console.log('Passed');
       const availableCourses = await apiRequests.getAvailableCourses();
       if (availableCourses) {
         this.setState({
           connectionEstablished: true,
-          moodleAvailableCourses: availableCourses,
+          availableCourses,
         });
       }
     } else {
       this.setState({
         connectionUserHint: t(
-          'Problem establishing the connection, maybe a wrong configuration in Moodle or a typo in the API endpoint?',
+          'Problem establishing the connection, maybe a wrong configuration in LMS or a typo in the API endpoint?',
         ),
         connectionEstablished: false,
       });
@@ -179,12 +171,12 @@ class Settings extends Component {
    */
   importCourseData = async () => {
     const { onImportData } = this.props;
-    const { moodleSelectedCourse, apiRequests } = this.state;
+    const { selectedCourse, apiRequests } = this.state;
 
-    const result = await apiRequests.getCourseData(moodleSelectedCourse);
+    const result = await apiRequests.getCourseData(selectedCourse);
     if (result) {
-      const { currentApiEndpoint, data } = result;
-      onImportData(currentApiEndpoint, data);
+      const { sourceUrl, data } = result;
+      onImportData(sourceUrl, data);
       this.handleClose();
     } else {
       console.error('A problem occured when importing the data');
@@ -199,25 +191,25 @@ class Settings extends Component {
   renderAvailableCourses() {
     const { t, classes } = this.props;
     const {
-      moodleSelectedCourse,
-      moodleAvailableCourses,
+      selectedCourse,
+      availableCourses,
       connectionEstablished,
       connectionUserHint,
     } = this.state;
 
     let output = '';
     if (connectionEstablished) {
-      if (moodleAvailableCourses.length > 0) {
+      if (availableCourses.length > 0) {
         output = (
           <>
             <Autocomplete
-              id="moodleCourseSelection"
+              id="courseSelection"
               multiple
               filterSelectedOptions
-              options={moodleAvailableCourses}
-              values={moodleSelectedCourse}
+              options={availableCourses}
+              values={selectedCourse}
               onChange={(event, newValue) => {
-                this.setState({ moodleSelectedCourse: newValue });
+                this.setState({ selectedCourse: newValue });
               }}
               getOptionLabel={(option) => option.shortname}
               renderInput={(params) => (
@@ -231,12 +223,12 @@ class Settings extends Component {
               )}
             />
             <Button
-              id="moodleImportCourse"
+              id="importCourse"
               variant="contained"
               className={classes.button}
               color="secondary"
               onClick={this.importCourseData}
-              disabled={moodleSelectedCourse.length === 0}
+              disabled={selectedCourse.length === 0}
             >
               {t('Import Course Data')}
             </Button>
@@ -258,9 +250,9 @@ class Settings extends Component {
    */
   renderButtons() {
     const { t } = this.props;
-    const { moodleApiEndpoint, moodleUsername } = this.state;
+    const { apiEndpoint, username } = this.state;
 
-    const saveDisabled = moodleApiEndpoint === '' || moodleUsername === '';
+    const saveDisabled = apiEndpoint === '' || username === '';
 
     return (
       <>
@@ -286,9 +278,9 @@ class Settings extends Component {
     const { t, activity, classes } = this.props;
 
     const {
-      moodleApiEndpoint,
-      moodleUsername,
-      moodlePassword,
+      apiEndpoint,
+      username,
+      password,
       connectionEstablished,
     } = this.state;
 
@@ -299,29 +291,29 @@ class Settings extends Component {
     return (
       <>
         <TextField
-          id="moodleApiEndpoint"
-          label={t('Moodle Endpoint (with trailing "/" at the end)')}
-          value={moodleApiEndpoint}
-          onChange={this.handleMoodleApiChange}
+          id="apiEndpoint"
+          label={t('LMS Base URL (with trailing "/" at the end)')}
+          value={apiEndpoint}
+          onChange={this.handleApiEndpointChange}
           className={classes.textField}
           fullWidth
         />
 
         <TextField
-          id="moodleUsername"
-          label={t('Moodle Username')}
-          value={moodleUsername}
-          onChange={this.handleMoodleUsernameChange}
+          id="username"
+          label={t('Username')}
+          value={username}
+          onChange={this.handleUsernameChange}
           className={classes.textField}
           fullWidth
         />
 
         <TextField
-          id="moodlePassword"
-          label={t('Moodle Password')}
-          value={moodlePassword}
+          id="password"
+          label={t('Password')}
+          value={password}
           type="password"
-          onChange={this.handleMoodlePasswordChange}
+          onChange={this.handlePasswordChange}
           className={classes.textField}
           fullWidth
         />
@@ -332,7 +324,7 @@ class Settings extends Component {
           className={classes.button}
           color={connectionEstablished ? 'primary' : 'secondary'}
           onClick={this.establishConnection}
-          disabled={moodleApiEndpoint === '' || moodleUsername === ''}
+          disabled={apiEndpoint === '' || username === ''}
         >
           {!connectionEstablished
             ? t('Establish Connection')

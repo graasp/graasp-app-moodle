@@ -13,23 +13,26 @@ describe('Import Data from Moodle', () => {
     cy.contains('No data imported yet');
   });
 
-  it('Delete saved resources (if any)', () => {});
-
   it('Establish a Connection', () => {
+    // Open Settings
     cy.get('button[aria-label="Settings"]').click();
+
+    cy.get('#apiEndpoint').as('apiEndpointTextField');
+    cy.get('#username').as('usernameTextField');
+    cy.get('#password').as('passwordTextField');
     cy.get('#establishConnection').as('establishConnectionButton');
 
     // Check when fields are empty
-    cy.get('#moodleApiEndpoint').clear();
-    cy.get('#moodleUsername').clear();
-    cy.get('#moodlePassword').clear();
+    cy.get('@apiEndpointTextField').clear();
+    cy.get('@usernameTextField').clear();
+    cy.get('@passwordTextField').clear();
     cy.get('@establishConnectionButton').contains('Establish Connection');
     cy.get('@establishConnectionButton').should('be.disabled');
 
     // Establish the connection
-    cy.get('#moodleApiEndpoint').type(MOODLE_API_ENDPOINT);
-    cy.get('#moodleUsername').type(MOODLE_USERNAME);
-    cy.get('#moodlePassword').type(MOODLE_PASSWORD);
+    cy.get('@apiEndpointTextField').type(MOODLE_API_ENDPOINT);
+    cy.get('@usernameTextField').type(MOODLE_USERNAME);
+    cy.get('@passwordTextField').type(MOODLE_PASSWORD);
     cy.get('@establishConnectionButton').should('not.be.disabled');
     cy.get('@establishConnectionButton').click();
     cy.get('@establishConnectionButton').contains('Connection Established');
@@ -37,14 +40,14 @@ describe('Import Data from Moodle', () => {
 
   it('Import a Course', () => {
     cy.contains('Select Course to Import');
-    cy.get('#moodleImportCourse').as('moodleImportCourseButton');
-    cy.get('@moodleImportCourseButton').should('be.disabled');
+    cy.get('#importCourse').as('importCourseButton');
+    cy.get('@importCourseButton').should('be.disabled');
 
     // Select the first available course and import it
-    cy.get('#moodleCourseSelection').click();
+    cy.get('#courseSelection').click();
     cy.focused().type('{downArrow}{enter}', { force: true });
-    cy.get('@moodleImportCourseButton').should('not.be.disabled');
-    cy.get('@moodleImportCourseButton').click();
+    cy.get('@importCourseButton').should('not.be.disabled');
+    cy.get('@importCourseButton').click();
     cy.contains('created'); // specific action type used at least once when "creating" a moodle course
   });
 
@@ -54,14 +57,14 @@ describe('Import Data from Moodle', () => {
     cy.get('@dataTable')
       .find('tr')
       .its('length')
-      .then($initialLength => {
+      .then(($initialLength) => {
         cy.get('@targetFilter').click();
         cy.get('@targetFilter').type('course');
         cy.focused().type('{downArrow}{enter}', { force: true });
         cy.get('@dataTable')
           .find('tr')
           .its('length')
-          .then($filteredLength => {
+          .then(($filteredLength) => {
             expect($initialLength).to.be.greaterThan($filteredLength);
           });
       });

@@ -41,9 +41,9 @@ Try it once with `http://localhost:3000/?spaceId=5b56e70ab253020033364411&appIns
 Click on the Settings Button in the bottom right-hand corner.
 Fill out the pop-up with the demanded information and click the "Establish Connection" Button.
 
-- Moodle API Endpoint: the URL to your Moodle instance where you installed the [WAFED Web Service Plugin](https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin).
-- Moodle Username: the username which should be used for authentication. Note that only courses will be listed, where the user is enrolled as Teacher (editingteacher)
-- Moodle Password: the password of the user.
+- API Endpoint: the URL to your LMS instance where you installed the [WAFED Web Service Plugin](https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin).
+- Username: the username which should be used for authentication. Note that only courses will be listed, where the user is enrolled as Teacher (editingteacher)
+- Password: the password of the user.
 
 Chooses one or more available courses and click "Import Data".
 Congratulations! The table shows you now the imported data.
