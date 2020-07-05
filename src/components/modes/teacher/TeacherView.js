@@ -98,6 +98,15 @@ const availableColumns = [
   'relateduserid',
   'timecreated',
 ];
+const defaultSelectedColumns = [
+  'userid',
+  'courseid',
+  'role',
+  'action',
+  'target',
+  'edulevel',
+  'timecreated',
+];
 
 export class TeacherView extends Component {
   static propTypes = {
@@ -138,7 +147,7 @@ export class TeacherView extends Component {
     appInstanceResources: [],
   };
 
-  static styles = theme => ({
+  static styles = (theme) => ({
     root: {
       width: '100%',
       marginTop: theme.spacing(3),
@@ -175,15 +184,7 @@ export class TeacherView extends Component {
     dataImported: false,
     data: [],
     dataSource: '',
-    selectedColumns: [
-      'userid',
-      'courseid',
-      'role',
-      'action',
-      'target',
-      'edulevel',
-      'timecreated',
-    ],
+    selectedColumns: defaultSelectedColumns,
     filters: {},
   };
 
@@ -200,21 +201,21 @@ export class TeacherView extends Component {
    */
   onImportData = (sourceUrl, data) => {
     const allValues = {};
-    availableColumns.forEach(column => {
+    availableColumns.forEach((column) => {
       allValues[column] = [];
     });
-    data.forEach(entry => {
+    data.forEach((entry) => {
       // Convert timecreated to readable datetime string
       if (entry.timecreated) {
         entry.timecreated = new Date(entry.timecreated * 1000).toLocaleString(); // eslint-disable-line no-param-reassign
       }
       // Add all values to the list of possible values for this column
-      availableColumns.forEach(column => {
+      availableColumns.forEach((column) => {
         allValues[column].push(entry[column]);
       });
     });
     const filters = {};
-    Object.keys(allValues).forEach(key => {
+    Object.keys(allValues).forEach((key) => {
       const uniqueValues = [...new Set(allValues[key])];
       filters[key] = {}; // required befor defining the attributes
       filters[key].options = uniqueValues;
@@ -229,10 +230,10 @@ export class TeacherView extends Component {
     });
   };
 
-  rowPassesAllColumnFilters = row => {
+  rowPassesAllColumnFilters = (row) => {
     const { filters } = this.state;
     return availableColumns.every(
-      column =>
+      (column) =>
         filters[column].selection.length === 0 ||
         filters[column].selection.includes(row[column]),
     );
@@ -245,7 +246,7 @@ export class TeacherView extends Component {
     const { classes } = this.props;
     const { selectedColumns } = this.state;
     const headers = [];
-    selectedColumns.forEach(column => {
+    selectedColumns.forEach((column) => {
       headers.push(<TableCell key={`column-${column}`}>{column}</TableCell>);
     });
     return (
@@ -316,7 +317,7 @@ export class TeacherView extends Component {
     const { selectedColumns, filters } = this.state;
     const renderedFilters = [];
     if (Object.keys(filters).length !== 0 && filters.constructor === Object) {
-      selectedColumns.forEach(column => {
+      selectedColumns.forEach((column) => {
         // Skip the column time created. This would require a more suitable filter solution like a date range selector
         if (column === 'timecreated') return;
         renderedFilters.push(
@@ -339,8 +340,8 @@ export class TeacherView extends Component {
                 // 5. Set the state to our new copy
                 this.setState({ filters: updatedFilters });
               }}
-              getOptionLabel={option => String(option)}
-              renderInput={params => (
+              getOptionLabel={(option) => String(option)}
+              renderInput={(params) => (
                 <TextField
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
@@ -376,8 +377,8 @@ export class TeacherView extends Component {
               this.setState({ selectedColumns: newValue });
             }}
             defaultValue={selectedColumns}
-            getOptionLabel={option => option}
-            renderInput={params => (
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
               <TextField
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...params}
