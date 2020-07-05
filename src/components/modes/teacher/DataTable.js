@@ -12,48 +12,15 @@ export class DataTable extends Component {
   static propTypes = {
     t: PropTypes.func.isRequired,
     classes: PropTypes.shape({
-      root: PropTypes.string,
       table: PropTypes.string,
-      main: PropTypes.string,
-      button: PropTypes.string,
-      message: PropTypes.string,
-      sectionTitle: PropTypes.string,
-      fab: PropTypes.string,
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     selectedColumns: PropTypes.arrayOf(PropTypes.string).isRequired,
   };
 
-  static styles = (theme) => ({
-    root: {
-      width: '100%',
-      marginTop: theme.spacing(3),
-      overflowX: 'auto',
-    },
-    main: {
-      textAlign: 'center',
-      margin: theme.spacing(),
-    },
-    button: {
-      marginTop: theme.spacing(3),
-    },
+  static styles = () => ({
     table: {
       minWidth: 700,
-    },
-    message: {
-      padding: theme.spacing(),
-      backgroundColor: theme.status.danger.background[500],
-      color: theme.status.danger.color,
-      marginBottom: theme.spacing(2),
-    },
-    sectionTitle: {
-      marginTop: theme.spacing(3),
-    },
-    fab: {
-      margin: theme.spacing(),
-      position: 'fixed',
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
     },
   });
 
