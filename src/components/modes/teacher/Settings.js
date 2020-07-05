@@ -133,10 +133,8 @@ class Settings extends Component {
   };
 
   /**
-   * Establish a connection to the specified API endpoint.
-   * Therefore, retrieve a token for future authentication and store it in the state.
-   * If connection is successfully established, getAvailableCourses() is executed.
-   * Else, the connectionUserHint is updated with an error related message.
+   * Try to establish a connection to the specified LMS using the current ApiRequests strategy.
+   * Updates the connectionsUserHint if a problem is encountered.
    */
   establishConnection = async () => {
     const { t } = this.props;
@@ -153,6 +151,7 @@ class Settings extends Component {
         this.setState({
           connectionEstablished: true,
           availableCourses,
+          connectionUserHint: '', // reset the hint
         });
       }
     } else {
@@ -170,7 +169,7 @@ class Settings extends Component {
    * Calls the callback passed in by the parant component.
    */
   importCourseData = async () => {
-    const { onImportData } = this.props;
+    const { onImportData, t } = this.props;
     const { selectedCourse, apiRequests } = this.state;
 
     const result = await apiRequests.getCourseData(selectedCourse);
@@ -178,15 +177,16 @@ class Settings extends Component {
       const { sourceUrl, data } = result;
       onImportData(sourceUrl, data);
       this.handleClose();
+      this.setState({ connectionUserHint: '' }); // reset the hint
     } else {
-      console.error('A problem occured when importing the data');
+      this.setState({
+        connectionUserHint: t('A problem occured when importing the data'),
+      });
     }
   };
 
   /**
-   * Renders a Autocomplete Component containing all the available courses and an import button.
-   * If the connection is not yet established, a feedback over the progress
-   * for the establishement is rendered.
+   * When the connection is established, it renders a Autocomplete Component containing all the available courses and an import button.
    */
   renderAvailableCourses() {
     const { t, classes } = this.props;
@@ -194,13 +194,11 @@ class Settings extends Component {
       selectedCourse,
       availableCourses,
       connectionEstablished,
-      connectionUserHint,
     } = this.state;
 
-    let output = '';
     if (connectionEstablished) {
       if (availableCourses.length > 0) {
-        output = (
+        return (
           <>
             <Autocomplete
               id="courseSelection"
@@ -234,15 +232,12 @@ class Settings extends Component {
             </Button>
           </>
         );
-      } else {
-        output = (
-          <p>{t('Sorry, there are no courses available for you to import')}</p>
-        );
       }
-    } else {
-      output = <p>{connectionUserHint}</p>;
+      return (
+        <p>{t('Sorry, there are no courses available for you to import')}</p>
+      );
     }
-    return output;
+    return ''; // to prevent eslint consistent-return error
   }
 
   /**
@@ -272,6 +267,17 @@ class Settings extends Component {
         </Tooltip>
       </>
     );
+  }
+
+  /**
+   * Render hints for the user if there is one
+   */
+  renderConnectionHints() {
+    const { connectionUserHint } = this.state;
+    if (connectionUserHint.length > 0) {
+      return <p>{connectionUserHint}</p>;
+    }
+    return ''; // to prevent eslint consistent-return error
   }
 
   renderModalContent() {
@@ -334,6 +340,8 @@ class Settings extends Component {
         <hr />
 
         {this.renderAvailableCourses()}
+
+        {this.renderConnectionHints()}
 
         <hr />
 
