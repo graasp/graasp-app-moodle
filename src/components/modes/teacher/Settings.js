@@ -51,11 +51,12 @@ const styles = (theme) => ({
 class Settings extends Component {
   state = (() => {
     const { settings } = this.props;
-    const { apiEndpoint, username, password } = settings;
+    const { apiEndpoint, username } = settings;
 
     const availableCourses = [];
     const selectedCourse = [];
     const connectionEstablished = false;
+    const password = '';
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
     const apiRequests = new MoodleApiRequests();
@@ -83,7 +84,6 @@ class Settings extends Component {
     settings: PropTypes.shape({
       apiEndpoint: PropTypes.string,
       username: PropTypes.string,
-      password: PropTypes.string,
     }).isRequired,
     t: PropTypes.func.isRequired,
     dispatchCloseSettings: PropTypes.func.isRequired,
@@ -111,11 +111,10 @@ class Settings extends Component {
   };
 
   handleSave = () => {
-    const { apiEndpoint, username, password } = this.state;
+    const { apiEndpoint, username } = this.state;
     const settingsToChange = {
       apiEndpoint,
       username,
-      password,
     };
     this.saveSettings(settingsToChange);
   };
