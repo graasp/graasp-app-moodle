@@ -262,7 +262,7 @@ export class TeacherView extends Component {
             onChange={(event, newValue) => {
               this.setState({ selectedColumns: newValue });
             }}
-            defaultValue={selectedColumns}
+            defaultValue={defaultSelectedColumns}
             getOptionLabel={(option) => option}
             renderInput={(params) => (
               <TextField
