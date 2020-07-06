@@ -250,14 +250,20 @@ class Settings extends Component {
 
     return (
       <>
-        <Tooltip title={t('Save configuration for next Session')} key="save">
-          <IconButton
-            size="small"
-            onClick={this.handleSave}
-            disabled={saveDisabled}
-          >
-            <SaveIcon color="secondary" opacity={saveDisabled ? 0.5 : 1} />
-          </IconButton>
+        <Tooltip
+          title={t('Save apiEndpoint and username for next Session')}
+          key="save"
+        >
+          <span>
+            {/* This span element is required to show the tooltip on a disabled element */}
+            <IconButton
+              size="small"
+              onClick={this.handleSave}
+              disabled={saveDisabled}
+            >
+              <SaveIcon color="primary" opacity={saveDisabled ? 0.5 : 1} />
+            </IconButton>
+          </span>
         </Tooltip>
         <Tooltip title={t('Cancel')} key="cancel">
           <IconButton size="small" onClick={this.handleClose}>
@@ -276,7 +282,7 @@ class Settings extends Component {
     if (connectionUserHint.length > 0) {
       return <p>{connectionUserHint}</p>;
     }
-    return ''; // to prevent eslint consistent-return error
+    return null; // to prevent eslint consistent-return error
   }
 
   renderModalContent() {

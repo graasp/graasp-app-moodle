@@ -1,11 +1,11 @@
 // The user MUST be enrolled as teacher in at least 1 course
-const MOODLE_API_ENDPOINT = 'http://localhost:80/moodle/';
+const MOODLE_API_ENDPOINT = 'http://localhost:80/moodle';
 const MOODLE_USERNAME = 'teacher';
 const MOODLE_PASSWORD = 'teacher';
 
-const GRAASP_URL = 'http://localhost:3000/';
+const GRAASP_URL = 'http://localhost:3000';
 const APP_INSTANCE_ID = '6156e70ab253020033364411';
-const GRAASP_TEACHER_APP_URL = `${GRAASP_URL}?spaceId=5b56e70ab253020033364411&appInstanceId=${APP_INSTANCE_ID}&mode=teacher&userId=5b56e70ab253020033364416&dev=true`;
+const GRAASP_TEACHER_APP_URL = `${GRAASP_URL}/?spaceId=5b56e70ab253020033364411&appInstanceId=${APP_INSTANCE_ID}&mode=teacher&userId=5b56e70ab253020033364416&dev=true`;
 
 describe('Import Data from Moodle', () => {
   it('Open the Graasp App', () => {

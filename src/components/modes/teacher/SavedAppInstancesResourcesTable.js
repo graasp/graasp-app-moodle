@@ -14,48 +14,8 @@ import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-
 import { deleteAppInstanceResource } from '../../../actions';
 import { getUsers } from '../../../actions/users';
-
-/**
- * helper method to render the rows of the app instance resource table
- * @param appInstanceResources
- * @param dispatchDeleteAppInstanceResource
- * @returns {*}
- */
-const renderAppInstanceResources = (
-  appInstanceResources,
-  { dispatchDeleteAppInstanceResource },
-) => {
-  // if there are no resources, show an empty table
-  if (!appInstanceResources.length) {
-    return (
-      <TableRow>
-        <TableCell colSpan={6}>No App Instance Resources</TableCell>
-      </TableRow>
-    );
-  }
-  // map each app instance resource to a row in the table
-  return appInstanceResources.map(({ _id, appInstance, data }) => (
-    <TableRow key={_id}>
-      <TableCell scope="row">{_id}</TableCell>
-      <TableCell>{appInstance}</TableCell>
-      <TableCell>{data.source}</TableCell>
-      <TableCell>{data.importedData.length}</TableCell>
-      <TableCell>{data.filtered ? <CheckIcon /> : <ClearIcon />}</TableCell>
-      <TableCell>
-        <IconButton
-          color="primary"
-          className="deleteAppInstanceButton"
-          onClick={() => dispatchDeleteAppInstanceResource(_id)}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ));
-};
 
 export class SavedAppInstancesResourcesTable extends Component {
   static propTypes = {
@@ -81,6 +41,7 @@ export class SavedAppInstancesResourcesTable extends Component {
         /* eslint-enable react/forbid-prop-types */
       }),
     ),
+    dispatchDeleteAppInstanceResource: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -114,6 +75,47 @@ export class SavedAppInstancesResourcesTable extends Component {
     },
   });
 
+  /**
+   * helper method to render the rows of the app instance resource table
+   * @param appInstanceResources
+   * @param dispatchDeleteAppInstanceResource
+   * @returns {*}
+   */
+  renderAppInstanceResources = () => {
+    const {
+      t,
+      dispatchDeleteAppInstanceResource,
+      appInstanceResources,
+    } = this.props;
+    // if there are no resources, show an empty table
+    if (!appInstanceResources.length) {
+      return (
+        <TableRow>
+          <TableCell colSpan={6}>{t('No App Instance Resources')}</TableCell>
+        </TableRow>
+      );
+    }
+    // map each app instance resource to a row in the table
+    return appInstanceResources.map(({ _id, appInstance, data }) => (
+      <TableRow key={_id}>
+        <TableCell scope="row">{_id}</TableCell>
+        <TableCell>{appInstance}</TableCell>
+        <TableCell>{data.source}</TableCell>
+        <TableCell>{data.importedData.length}</TableCell>
+        <TableCell>{data.filtered ? <CheckIcon /> : <ClearIcon />}</TableCell>
+        <TableCell>
+          <IconButton
+            color="primary"
+            className="deleteAppInstanceButton"
+            onClick={() => dispatchDeleteAppInstanceResource(_id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
   render() {
     // extract properties from the props object
     const {
@@ -121,8 +123,6 @@ export class SavedAppInstancesResourcesTable extends Component {
       classes,
       // this property allows us to do translations and is injected by i18next
       t,
-      // these properties are injected by the redux mapStateToProps method
-      appInstanceResources,
     } = this.props;
     return (
       <>
@@ -137,17 +137,15 @@ export class SavedAppInstancesResourcesTable extends Component {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>App Instance</TableCell>
-                <TableCell>Source</TableCell>
-                <TableCell>Data Entries</TableCell>
-                <TableCell>Filtered</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t('ID')}</TableCell>
+                <TableCell>{t('App Instance')}</TableCell>
+                <TableCell>{t('Source')}</TableCell>
+                <TableCell>{t('Data Entries')}</TableCell>
+                <TableCell>{t('Filtered')}</TableCell>
+                <TableCell>{t('Actions')}</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {renderAppInstanceResources(appInstanceResources, this.props)}
-            </TableBody>
+            <TableBody>{this.renderAppInstanceResources()}</TableBody>
           </Table>
         </Paper>
       </>

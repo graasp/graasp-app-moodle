@@ -41,6 +41,7 @@ const saveAsAppInstanceResource = (
   });
 };
 
+// column constants should be only for prototype. Later this content should be generated upon response from LMS
 const availableColumns = [
   'userid',
   'courseid',
@@ -167,11 +168,11 @@ export class TeacherView extends Component {
     });
     const filters = {};
     Object.keys(allValues).forEach((key) => {
-      const uniqueValues = [...new Set(allValues[key])];
-      filters[key] = {}; // required befor defining the attributes
-      filters[key].options = uniqueValues;
-      // set initial value to contain all possible values
-      filters[key].selection = uniqueValues;
+      const uniqueValues = [...new Set(allValues[key])]; // create a Set from an Array, then spread again to Array
+      filters[key] = {
+        options: uniqueValues,
+        selection: [], // init without pre-set filter};
+      };
     });
     this.setState({
       data,
@@ -296,7 +297,7 @@ export class TeacherView extends Component {
               color="inherit"
               className={classes.sectionTitle}
             >
-              {t('Working Data')}
+              {t('Imported Data')}
             </Typography>
             <Paper className={classes.root}>
               {this.renderCourseLogConfiguration()}
