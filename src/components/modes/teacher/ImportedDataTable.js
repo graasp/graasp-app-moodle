@@ -8,7 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
-export class DataTable extends Component {
+export class ImportedDataTable extends Component {
   static propTypes = {
     t: PropTypes.func.isRequired,
     classes: PropTypes.shape({
@@ -28,7 +28,7 @@ export class DataTable extends Component {
    * Render the actual TableBody with selected columns and applied filters.
    * If no data is imported yet or no data matches the filter criterion, a specific message is displayed.
    */
-  renderCourseLogContent() {
+  renderImportedDataTableContent() {
     const { t, data, selectedColumns } = this.props;
 
     // Construct table rows to print later
@@ -69,12 +69,12 @@ export class DataTable extends Component {
         <TableHead>
           <TableRow>{headers}</TableRow>
         </TableHead>
-        {this.renderCourseLogContent()}
+        {this.renderImportedDataTableContent()}
       </Table>
     );
   }
 }
 
-const StyledComponent = withStyles(DataTable.styles)(DataTable);
+const StyledComponent = withStyles(ImportedDataTable.styles)(ImportedDataTable);
 
 export default withTranslation()(StyledComponent);

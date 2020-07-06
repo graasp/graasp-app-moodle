@@ -13,7 +13,7 @@ import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
 import './TeacherView.css';
-import DataTable from './DataTable';
+import DataTable from './ImportedDataTable';
 import SavedAppInstancesResourcesTable from './SavedAppInstancesResourcesTable';
 import {
   postAppInstanceResource,
@@ -199,7 +199,7 @@ export class TeacherView extends Component {
   /**
    * Render a filter option for each selected column
    */
-  renderCourseLogFilters = () => {
+  renderImportedDataTableFilters = () => {
     const { t } = this.props;
     const { selectedColumns, filters } = this.state;
     const renderedFilters = [];
@@ -248,7 +248,7 @@ export class TeacherView extends Component {
   /**
    * Render the possible configurations such as columns to display and available filters.
    */
-  renderCourseLogConfiguration() {
+  renderImportedDataTableConfiguration() {
     const { t } = this.props;
     const { selectedColumns } = this.state;
 
@@ -277,7 +277,7 @@ export class TeacherView extends Component {
           />
         </Grid>
 
-        {this.renderCourseLogFilters()}
+        {this.renderImportedDataTableFilters()}
       </Grid>
     );
   }
@@ -300,7 +300,7 @@ export class TeacherView extends Component {
               {t('Imported Data')}
             </Typography>
             <Paper className={classes.root}>
-              {this.renderCourseLogConfiguration()}
+              {this.renderImportedDataTableConfiguration()}
               <Button
                 color="primary"
                 id="saveRawAsAppInstanceResourceButton"
