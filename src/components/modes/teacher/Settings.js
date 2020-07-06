@@ -171,7 +171,9 @@ class Settings extends Component {
     const { onImportData, t } = this.props;
     const { selectedCourse, apiRequests } = this.state;
 
-    const result = await apiRequests.getCourseData(selectedCourse);
+    const result = await apiRequests.getCourseData(
+      selectedCourse.map((item) => item.courseid), // pass only id's instead of whole objects.
+    );
     if (result) {
       const { sourceUrl, data } = result;
       onImportData(sourceUrl, data);

@@ -64,7 +64,7 @@ class MoodleApiRequests extends ApiRequests {
 
   /**
    * Load data for selected courses through API.
-   * @param {(string|number)[]} selectedCourses
+   * @param {(string|number)[]} selectedCourses identifiers
    * @returns {*} the exported data
    */
   async getCourseData(selectedCourses) {
@@ -72,7 +72,7 @@ class MoodleApiRequests extends ApiRequests {
     const params = {
       wstoken: this.currentApiToken,
       wsfunction: 'local_wafed_moodle_webservice_plugin_get_course_data',
-      courseids: selectedCourses.map((item) => item.courseid), // only take the course id from the object
+      courseids: selectedCourses, // only take the course id from the object
       moodlewsrestformat: 'json',
     };
     const moodleDataExportEndpoint = buildUrlWithQueryParams(url, params);
