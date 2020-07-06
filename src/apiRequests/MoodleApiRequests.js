@@ -1,4 +1,9 @@
 import ApiRequests from './ApiRequests';
+import { buildUrlWithQueryParams } from '../utils/url';
+
+const TOKEN_ENDPOINT = 'login/token.php';
+const WEB_SERVICE_ENDPOINT = 'webservice/rest/server.php';
+
 /**
  * Will be set once the connection is established.
  */
@@ -11,10 +16,13 @@ class MoodleApiRequests extends ApiRequests {
    * @returns {boolean} true if succeeded and false if not
    */
   async getToken(apiEndpoint, username, password) {
-    // the name of the web service in moodle, which will then be used for the export/import of data
-    const moodleService = 'wafed_webservices';
-    const moodleTokenEndpoint = `${apiEndpoint}/login/token.php?username=${username}&password=${password}&service=${moodleService}`;
-    // get the token to be authenticated later
+    const url = `${apiEndpoint}/${TOKEN_ENDPOINT}`;
+    const params = {
+      username,
+      password,
+      service: 'wafed_webservices',
+    };
+    const moodleTokenEndpoint = buildUrlWithQueryParams(url, params);
     return fetch(moodleTokenEndpoint)
       .then((response) => response.json())
       .then((data) => {
@@ -36,9 +44,13 @@ class MoodleApiRequests extends ApiRequests {
    * @returns {(string|number)[]} a list of ids of available courses
    */
   async getAvailableCourses() {
-    const wsFunction =
-      'local_wafed_moodle_webservice_plugin_get_available_courses';
-    const moodleAvailableCoursesEndpoint = `${this.currentApiEndpoint}/webservice/rest/server.php?wstoken=${this.currentApiToken}&wsfunction=${wsFunction}&moodlewsrestformat=json`;
+    const url = `${this.currentApiEndpoint}/${WEB_SERVICE_ENDPOINT}`;
+    const params = {
+      wstoken: this.currentApiToken,
+      wsfunction: 'local_wafed_moodle_webservice_plugin_get_available_courses',
+      moodlewsrestformat: 'json',
+    };
+    const moodleAvailableCoursesEndpoint = buildUrlWithQueryParams(url, params);
     return fetch(moodleAvailableCoursesEndpoint)
       .then((res) => res.json())
       .then((res) => {
@@ -56,12 +68,15 @@ class MoodleApiRequests extends ApiRequests {
    * @returns {*} the exported data
    */
   async getCourseData(selectedCourses) {
-    let courseParams = '';
-    selectedCourses.forEach((course, index) => {
-      courseParams += `&courseids[${index}]=${course.courseid}`;
-    });
-    const moodleDataExportEndpoint = `${this.currentApiEndpoint}/webservice/rest/server.php?wstoken=${this.currentApiToken}&wsfunction=local_wafed_moodle_webservice_plugin_get_course_data&moodlewsrestformat=json${courseParams}`;
-    const sourceUrl = this.currentApiEndpoint;
+    const url = `${this.currentApiEndpoint}/${WEB_SERVICE_ENDPOINT}`;
+    const params = {
+      wstoken: this.currentApiToken,
+      wsfunction: 'local_wafed_moodle_webservice_plugin_get_course_data',
+      courseids: selectedCourses.map((item) => item.courseid), // only take the course id from the object
+      moodlewsrestformat: 'json',
+    };
+    const moodleDataExportEndpoint = buildUrlWithQueryParams(url, params);
+    const sourceUrl = this.currentApiEndpoint; // store in local variable because this is not accessible from promise
     return fetch(moodleDataExportEndpoint)
       .then((response) => response.json())
       .then((data) => {
