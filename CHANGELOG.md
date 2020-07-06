@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/graasp/graasp-app-moodle/compare/v0.1.0...v0.1.1) (2020-07-06)
+
+### Features
+
+- implement strategy pattern ([eace5cf](https://github.com/graasp/graasp-app-moodle/commit/eace5cfe5501f16b7bf90afd40847feecc8b34ee))
+- save filtered data ([8138a7a](https://github.com/graasp/graasp-app-moodle/commit/8138a7a7fd556adba53d87e712c2b2e2918d37c1))
+- store if data is filtered or not ([430dade](https://github.com/graasp/graasp-app-moodle/commit/430dade9139c083c4fa91c660f1e769f2e4e3bec))
+
+### Bug Fixes
+
+- add extra line at end of file ([88e532d](https://github.com/graasp/graasp-app-moodle/commit/88e532d59d2cf5940d7dd2b685283c4208618f85))
+- add missing param to abstract method ([332a09a](https://github.com/graasp/graasp-app-moodle/commit/332a09a67ba561c88fdbe3b48522c35f69a68635))
+- add unique key to jsx loop element ([dd27458](https://github.com/graasp/graasp-app-moodle/commit/dd274582e1b9966bdae2a8a0bd8b99e62dc6bce3))
+- changing default selected values autocomplete ([7c3615b](https://github.com/graasp/graasp-app-moodle/commit/7c3615b135733f7aefcb36948c55a3f7ec91efd7))
+- conver timecreated only if exist ([367de62](https://github.com/graasp/graasp-app-moodle/commit/367de62d2f4d6b6fac87ea8d65a7b581e8e7a734))
+- delay deletion of resources until loaded ([8f292cd](https://github.com/graasp/graasp-app-moodle/commit/8f292cdf42300a86f07c77e20609d66ec56ac29b))
+- ignore only cypress examples ([9ee53eb](https://github.com/graasp/graasp-app-moodle/commit/9ee53eb51f9a01dc6805f5235a997d138eedf9a7))
+- implement feedback on merge request ([009356c](https://github.com/graasp/graasp-app-moodle/commit/009356c6dbc3fd729c0e0ea982055d360286dc28))
+- merge branch 'master' into dev ([cb5ce5b](https://github.com/graasp/graasp-app-moodle/commit/cb5ce5bffe7aa86688f1dbc83bbc86930e7119dd))
+- prevent loader and rerender of component ([7d806c6](https://github.com/graasp/graasp-app-moodle/commit/7d806c6f2a178fad2b79fd8cd5e3c43e91aa55b6))
+- remove default values for connection in store ([34454c8](https://github.com/graasp/graasp-app-moodle/commit/34454c82ced5b52787395da7f11e71389f8251f4))
+- remove the timecreated filter ([db189f9](https://github.com/graasp/graasp-app-moodle/commit/db189f94ba79d7c4df394cb3ed1bb8e27f870dde))
+- rename displayed app title ([a9a5c3d](https://github.com/graasp/graasp-app-moodle/commit/a9a5c3d6a46146603bc53e147b5fcbc47c6b4c60))
+- rename table labels ([718bd67](https://github.com/graasp/graasp-app-moodle/commit/718bd67b91845b4a9a2f565b57dcf64d4808090e))
+- spelling in a comment ([10d440a](https://github.com/graasp/graasp-app-moodle/commit/10d440aa115051686f382afe70ac22ec61ec9ea9))
+- update node packages ([875cd3d](https://github.com/graasp/graasp-app-moodle/commit/875cd3dcba89ebe307dfde044187b48c5736125f))
+- update scripts for deployment ([2333d4f](https://github.com/graasp/graasp-app-moodle/commit/2333d4f3da5abf50dc3a053f7e5748201c7a399c))
+
+### Tests
+
+- delete saved resource again ([1da5f4c](https://github.com/graasp/graasp-app-moodle/commit/1da5f4c59d9a4770505c3606710384ffb0128dbe))
+
+### Documentation
+
+- update getCourseData() description ([aa162f7](https://github.com/graasp/graasp-app-moodle/commit/aa162f7d4641b860ba851c4eb1cd52cf996e07d4))
+- update method description ([398a88b](https://github.com/graasp/graasp-app-moodle/commit/398a88b92098eaa83f77e1620ba387d2994aa335))
+
 ## 0.1.0 (2020-06-30)
 
 ### Features
