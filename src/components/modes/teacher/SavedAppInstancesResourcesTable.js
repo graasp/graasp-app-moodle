@@ -25,7 +25,6 @@ export class SavedAppInstancesResourcesTable extends Component {
       table: PropTypes.string,
       main: PropTypes.string,
       button: PropTypes.string,
-      message: PropTypes.string,
       sectionTitle: PropTypes.string,
       fab: PropTypes.string,
     }).isRequired,
@@ -63,12 +62,6 @@ export class SavedAppInstancesResourcesTable extends Component {
     },
     table: {
       minWidth: 700,
-    },
-    message: {
-      padding: theme.spacing(),
-      backgroundColor: theme.status.danger.background[500],
-      color: theme.status.danger.color,
-      marginBottom: theme.spacing(2),
     },
     sectionTitle: {
       marginTop: theme.spacing(3),
