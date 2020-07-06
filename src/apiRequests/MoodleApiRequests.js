@@ -13,7 +13,7 @@ class MoodleApiRequests extends ApiRequests {
   async getToken(apiEndpoint, username, password) {
     // the name of the web service in moodle, which will then be used for the export/import of data
     const moodleService = 'wafed_webservices';
-    const moodleTokenEndpoint = `${apiEndpoint}login/token.php?username=${username}&password=${password}&service=${moodleService}`;
+    const moodleTokenEndpoint = `${apiEndpoint}/login/token.php?username=${username}&password=${password}&service=${moodleService}`;
     // get the token to be authenticated later
     return fetch(moodleTokenEndpoint)
       .then((response) => response.json())

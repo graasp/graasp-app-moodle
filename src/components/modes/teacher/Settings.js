@@ -297,7 +297,7 @@ class Settings extends Component {
       <>
         <TextField
           id="apiEndpoint"
-          label={t('LMS Base URL (with trailing "/" at the end)')}
+          label={t('LMS Base URL (without trailing "/" at the end)')}
           value={apiEndpoint}
           onChange={this.handleApiEndpointChange}
           className={classes.textField}
