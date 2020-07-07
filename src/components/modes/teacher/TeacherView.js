@@ -72,8 +72,9 @@ export class TeacherView extends Component {
       table: PropTypes.string,
       main: PropTypes.string,
       button: PropTypes.string,
-
       sectionTitle: PropTypes.string,
+      gridNoSpace: PropTypes.string,
+      tableConfigPadding: PropTypes.string,
       fab: PropTypes.string,
     }).isRequired,
     dispatchGetUsers: PropTypes.func.isRequired,
@@ -122,6 +123,15 @@ export class TeacherView extends Component {
     },
     sectionTitle: {
       marginTop: theme.spacing(3),
+    },
+    gridNoSpace: {
+      margin: theme.spacing(0),
+      flexGrow: 0,
+      maxWidth: `100%`,
+      flexBasis: `100%`,
+    },
+    tableConfigPadding: {
+      padding: theme.spacing(1),
     },
     fab: {
       margin: theme.spacing(),
@@ -208,37 +218,36 @@ export class TeacherView extends Component {
         // Skip the column time created. This would require a more suitable filter solution like a date range selector
         if (column === 'timecreated') return;
         renderedFilters.push(
-          <Grid item sm={6} md={3} lg={2} key={`filter-${column}`}>
-            <Autocomplete
-              id={`filter-${column}`}
-              multiple
-              filterSelectedOptions
-              options={filters[column].options}
-              values={filters[column].selection}
-              onChange={(event, newValue) => {
-                // 1. Make a shallow copy of the items
-                const updatedFilters = { ...filters };
-                // 2. Make a shallow copy of the item you want to mutate
-                const filter = { ...updatedFilters[column] };
-                // 3. Replace the property you're intested in
-                filter.selection = newValue;
-                // 4. Put it back into our array
-                updatedFilters[column] = filter;
-                // 5. Set the state to our new copy
-                this.setState({ filters: updatedFilters });
-              }}
-              getOptionLabel={(option) => String(option)}
-              renderInput={(params) => (
-                <TextField
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...params}
-                  variant="standard"
-                  label={column}
-                  placeholder={t('Select an option')}
-                />
-              )}
-            />
-          </Grid>,
+          <Autocomplete
+            id={`filter-${column}`}
+            key={`filter-${column}`}
+            multiple
+            filterSelectedOptions
+            options={filters[column].options}
+            values={filters[column].selection}
+            onChange={(event, newValue) => {
+              // 1. Make a shallow copy of the items
+              const updatedFilters = { ...filters };
+              // 2. Make a shallow copy of the item you want to mutate
+              const filter = { ...updatedFilters[column] };
+              // 3. Replace the property you're intested in
+              filter.selection = newValue;
+              // 4. Put it back into our array
+              updatedFilters[column] = filter;
+              // 5. Set the state to our new copy
+              this.setState({ filters: updatedFilters });
+            }}
+            getOptionLabel={(option) => String(option)}
+            renderInput={(params) => (
+              <TextField
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...params}
+                variant="standard"
+                label={column}
+                placeholder={t('Select an option')}
+              />
+            )}
+          />,
         );
       });
     }
@@ -249,43 +258,74 @@ export class TeacherView extends Component {
    * Render the possible configurations such as columns to display and available filters.
    */
   renderImportedDataTableConfiguration() {
-    const { t } = this.props;
-    const { selectedColumns } = this.state;
+    const { classes, t } = this.props;
+    const { data, dataSource, selectedColumns } = this.state;
 
     return (
-      <Grid container spacing={2}>
-        <Grid item sm={12}>
-          <Autocomplete
-            multiple
-            filterSelectedOptions
-            options={availableColumns}
-            values={selectedColumns}
-            onChange={(event, newValue) => {
-              this.setState({ selectedColumns: newValue });
-            }}
-            defaultValue={defaultSelectedColumns}
-            getOptionLabel={(option) => option}
-            renderInput={(params) => (
-              <TextField
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...params}
-                variant="standard"
-                label={t('Columns')}
-                placeholder={t('Select an option')}
-              />
-            )}
-          />
-        </Grid>
+      <div className={classes.tableConfigPadding}>
+        <Typography variant="body1" color="inherit">
+          {t('Options')}
+        </Typography>
+        <Autocomplete
+          multiple
+          filterSelectedOptions
+          options={availableColumns}
+          values={selectedColumns}
+          onChange={(event, newValue) => {
+            this.setState({ selectedColumns: newValue });
+          }}
+          defaultValue={defaultSelectedColumns}
+          getOptionLabel={(option) => option}
+          renderInput={(params) => (
+            <TextField
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...params}
+              variant="standard"
+              label={t('Columns')}
+              placeholder={t('Select an option')}
+            />
+          )}
+        />
 
         {this.renderImportedDataTableFilters()}
-      </Grid>
+
+        <Button
+          color="primary"
+          id="saveRawAsAppInstanceResourceButton"
+          className={classes.button}
+          disabled={data.length === 0}
+          variant="contained"
+          onClick={() => {
+            saveAsAppInstanceResource(data, dataSource, false, this.props);
+          }}
+        >
+          {t('Save Unfiltered')}
+        </Button>
+        <Button
+          color="primary"
+          id="saveFilteredAsAppInstanceResourceButton"
+          className={classes.button}
+          disabled={data.length === 0}
+          variant="contained"
+          onClick={() => {
+            saveAsAppInstanceResource(
+              this.filterRows(data),
+              dataSource,
+              true,
+              this.props,
+            );
+          }}
+        >
+          {t('Save Filtered')}
+        </Button>
+      </div>
     );
   }
 
   render() {
     // extract properties from the props object
     const { classes, t, dispatchOpenSettings } = this.props;
-    const { data, dataSource, selectedColumns } = this.state;
+    const { data, selectedColumns } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -300,46 +340,20 @@ export class TeacherView extends Component {
               {t('Imported Data')}
             </Typography>
             <Paper className={classes.root}>
-              {this.renderImportedDataTableConfiguration()}
-              <Button
-                color="primary"
-                id="saveRawAsAppInstanceResourceButton"
-                className={classes.button}
-                disabled={data.length === 0}
-                variant="contained"
-                onClick={() => {
-                  saveAsAppInstanceResource(
-                    data,
-                    dataSource,
-                    false,
-                    this.props,
-                  );
-                }}
-              >
-                {t('Save Unfiltered')}
-              </Button>
-              <Button
-                color="primary"
-                id="saveFilteredAsAppInstanceResourceButton"
-                className={classes.button}
-                disabled={data.length === 0}
-                variant="contained"
-                onClick={() => {
-                  saveAsAppInstanceResource(
-                    this.filterRows(data),
-                    dataSource,
-                    true,
-                    this.props,
-                  );
-                }}
-              >
-                {t('Save Filtered')}
-              </Button>
-
-              <DataTable
-                data={this.filterRows(data)}
-                selectedColumns={selectedColumns}
-              />
+              <Grid container spacing={1} className={classes.gridNoSpace}>
+                {/* requires flex-grow to fill width on smaller screens */}
+                <Grid item md={3} style={{ flexGrow: 1 }}>
+                  <Paper className={classes.root}>
+                    {this.renderImportedDataTableConfiguration()}
+                  </Paper>
+                </Grid>
+                <Grid item md>
+                  <DataTable
+                    data={this.filterRows(data)}
+                    selectedColumns={selectedColumns}
+                  />
+                </Grid>
+              </Grid>
             </Paper>
           </Grid>
         </Grid>
