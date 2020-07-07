@@ -56,7 +56,7 @@ class Settings extends Component {
     const availableCourses = [];
     const selectedCourse = [];
     const connectionEstablished = false;
-    const password = '';
+    const password = 'teacher'; // TODO: reset to ''
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
     const apiRequests = new MoodleApiRequests();
