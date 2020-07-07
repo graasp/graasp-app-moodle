@@ -9,11 +9,11 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
+import MUIDataTable from 'mui-datatables';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { MOODLE_DATA } from '../../../config/appInstanceResourceTypes';
 import './TeacherView.css';
-import DataTable from './ImportedDataTable';
 import SavedAppInstancesResourcesTable from './SavedAppInstancesResourcesTable';
 import {
   postAppInstanceResource,
@@ -322,10 +322,44 @@ export class TeacherView extends Component {
     );
   }
 
+  /**
+   * Render the sortable table containing the imported data
+   */
+  renderImportedDataTable() {
+    const { data, selectedColumns } = this.state;
+    // reset default options
+    const options = {
+      filter: false,
+      download: false,
+      selectableRowsHeader: false,
+      search: false,
+      print: false,
+      viewColumns: false,
+      selectableRows: 'none',
+    };
+    // put data in same order as headers
+    const filteredData = data ? this.filterRows(data) : []; // prevent of passing undefined to filterRows
+    const fixedOrderData = filteredData.map((row) => {
+      const fixedOrderRow = [];
+      selectedColumns.forEach((column) => {
+        fixedOrderRow.push(row[column]);
+      });
+      return fixedOrderRow;
+    });
+
+    return (
+      <MUIDataTable
+        // data={data.map((row) => Object.keys(row).map((k) => row[k]))}
+        data={fixedOrderData}
+        columns={selectedColumns}
+        options={options}
+      />
+    );
+  }
+
   render() {
     // extract properties from the props object
     const { classes, t, dispatchOpenSettings } = this.props;
-    const { data, selectedColumns } = this.state;
     return (
       <>
         <Grid container spacing={0}>
@@ -343,15 +377,10 @@ export class TeacherView extends Component {
               <Grid container spacing={1} className={classes.gridNoSpace}>
                 {/* requires flex-grow to fill width on smaller screens */}
                 <Grid item md={3} style={{ flexGrow: 1 }}>
-                  <Paper className={classes.root}>
-                    {this.renderImportedDataTableConfiguration()}
-                  </Paper>
+                  {this.renderImportedDataTableConfiguration()}
                 </Grid>
                 <Grid item md>
-                  <DataTable
-                    data={this.filterRows(data)}
-                    selectedColumns={selectedColumns}
-                  />
+                  {this.renderImportedDataTable()}
                 </Grid>
               </Grid>
             </Paper>
