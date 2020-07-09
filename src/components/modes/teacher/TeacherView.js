@@ -207,6 +207,22 @@ export class TeacherView extends Component {
   };
 
   /**
+   * Check if at least one filter has currently a selection
+   * @param {*} filters
+   */
+  anyFiltersActivated = (filters) => {
+    let filtersActive = 0;
+    Object.keys(filters).forEach(function (key) {
+      const filter = filters[key];
+      if (filter.selection.length > 0) {
+        filtersActive += 1;
+      }
+    });
+
+    return filtersActive > 0;
+  };
+
+  /**
    * Render a filter option for each selected column
    */
   renderImportedDataTableFilters = () => {
@@ -259,7 +275,7 @@ export class TeacherView extends Component {
    */
   renderImportedDataTableConfiguration() {
     const { classes, t } = this.props;
-    const { data, dataSource, selectedColumns } = this.state;
+    const { data, dataSource, selectedColumns, filters } = this.state;
 
     return (
       <div className={classes.tableConfigPadding}>
@@ -305,7 +321,7 @@ export class TeacherView extends Component {
           color="primary"
           id="saveFilteredAsAppInstanceResourceButton"
           className={classes.button}
-          disabled={data.length === 0}
+          disabled={data.length === 0 || !this.anyFiltersActivated(filters)}
           variant="contained"
           onClick={() => {
             saveAsAppInstanceResource(
@@ -349,7 +365,6 @@ export class TeacherView extends Component {
 
     return (
       <MUIDataTable
-        // data={data.map((row) => Object.keys(row).map((k) => row[k]))}
         data={fixedOrderData}
         columns={selectedColumns}
         options={options}
