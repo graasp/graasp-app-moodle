@@ -4,8 +4,6 @@ FROM bitnami/moodle:3.8.0
 # Make apt package available
 RUN apt update
 RUN apt upgrade -y
-#RUN apt-get update
-#RUN apt-get upgrade -y
 
 # TODO temporarly install vim. Can be removed later again
 RUN apt install -y vim

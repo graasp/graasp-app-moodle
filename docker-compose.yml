@@ -1,6 +1,6 @@
 version: '2'
 services:
-  mariadb:
+  moodle-db:
     build: ./docker-auxillaries/mariadb-img
     environment:
       - MARIADB_USER=bn_moodle
@@ -8,7 +8,7 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - 'mariadb_data:/bitnami'
-  moodle:
+  moodle-web-server:
     build: ./docker-auxillaries/moodle-img
     environment:
       - MARIADB_HOST=mariadb
@@ -26,8 +26,8 @@ services:
     volumes:
       - '/moodle_data:/bitnami'
     depends_on:
-      - mariadb
-  graasp-app:
+      - moodle-db
+  graasp-moodle-app:
     build: .
     ports:
       - '8000:3000'
@@ -39,10 +39,3 @@ volumes:
     driver: local
   moodle_data:
     driver: local
-#  graasp-app:
-#    build: .
-#    ports:
-#      - '8000:3000'
-#    depends_on:
-#      - moodle
-
