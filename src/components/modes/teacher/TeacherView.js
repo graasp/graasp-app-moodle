@@ -41,28 +41,6 @@ const saveAsAppInstanceResource = (
   });
 };
 
-// column constants should be only for prototype. Later this content should be generated upon response from LMS
-const availableColumns = [
-  'userid',
-  'courseid',
-  'role',
-  'edulevel',
-  'eventname',
-  'action',
-  'target',
-  'relateduserid',
-  'timecreated',
-];
-const defaultSelectedColumns = [
-  'userid',
-  'courseid',
-  'role',
-  'action',
-  'target',
-  'edulevel',
-  'timecreated',
-];
-
 export class TeacherView extends Component {
   static propTypes = {
     t: PropTypes.func.isRequired,
@@ -144,7 +122,8 @@ export class TeacherView extends Component {
   state = {
     data: [],
     dataSource: '',
-    selectedColumns: defaultSelectedColumns,
+    availableColumns: [],
+    selectedColumns: [],
     filters: {},
   };
 
@@ -155,13 +134,31 @@ export class TeacherView extends Component {
   }
 
   /**
+   * Read the first element from data and update the availableColumns in the state
+   * @param {*} data from which the available columns are extracted from
+   * @returns {string[]} containing all keys present in a row
+   */
+  extractAvailableColumns = (data) => {
+    const newAvailableColumns = [];
+    if (typeof data[0] === 'undefined') {
+      return null;
+    }
+
+    const row = data[0];
+    Object.keys(row).forEach((key) => {
+      newAvailableColumns.push(key);
+    });
+
+    return newAvailableColumns;
+  };
+
+  /**
    * Prepare filters based on the imported data and persist data to the state.
    * @param {string} sourceUrl where the data is imported from
-   * @param {*[]} data where each element shall have at least the following attributes: action, target, userid, courseid
+   * @param {*[]} data which stores multiple event entries
    */
   onImportData = (sourceUrl, data) => {
-    console.log(sourceUrl);
-    console.log(data);
+    const availableColumns = this.extractAvailableColumns(data);
     const allValues = {};
     availableColumns.forEach((column) => {
       allValues[column] = [];
@@ -188,6 +185,8 @@ export class TeacherView extends Component {
       data,
       dataSource: sourceUrl,
       filters,
+      availableColumns,
+      selectedColumns: availableColumns,
     });
   };
 
@@ -196,7 +195,7 @@ export class TeacherView extends Component {
    * @param {*} data
    */
   filterRows = (data) => {
-    const { filters } = this.state;
+    const { filters, availableColumns } = this.state;
     return data.filter((row) =>
       availableColumns.every(
         (column) =>
@@ -212,7 +211,7 @@ export class TeacherView extends Component {
    */
   anyFiltersActivated = (filters) => {
     let filtersActive = 0;
-    Object.keys(filters).forEach(function (key) {
+    Object.keys(filters).forEach((key) => {
       const filter = filters[key];
       if (filter.selection.length > 0) {
         filtersActive += 1;
@@ -270,27 +269,19 @@ export class TeacherView extends Component {
     return renderedFilters;
   };
 
-  /**
-   * Render the possible configurations such as columns to display and available filters.
-   */
-  renderImportedDataTableConfiguration() {
-    const { classes, t } = this.props;
-    const { data, dataSource, selectedColumns, filters } = this.state;
-
-    return (
-      <div className={classes.tableConfigPadding}>
-        <Typography variant="body1" color="inherit">
-          {t('Options')}
-        </Typography>
+  renderColumnSelection = () => {
+    const { t } = this.props;
+    const { availableColumns, selectedColumns, dataSource } = this.state;
+    if (dataSource !== '') {
+      return (
         <Autocomplete
           multiple
           filterSelectedOptions
           options={availableColumns}
-          values={selectedColumns}
+          value={selectedColumns}
           onChange={(event, newValue) => {
             this.setState({ selectedColumns: newValue });
           }}
-          defaultValue={defaultSelectedColumns}
           getOptionLabel={(option) => option}
           renderInput={(params) => (
             <TextField
@@ -302,8 +293,27 @@ export class TeacherView extends Component {
             />
           )}
         />
+      );
+    }
+    return ''; // to prevent eslint consistent-return error
+  };
+
+  /**
+   * Render the possible configurations such as columns to display and available filters.
+   */
+  renderImportedDataTableConfiguration() {
+    const { classes, t } = this.props;
+    const { data, dataSource, filters } = this.state;
+
+    return (
+      <div className={classes.tableConfigPadding}>
+        <Typography variant="body1" color="inherit">
+          {t('Options')}
+        </Typography>
 
         {this.renderImportedDataTableFilters()}
+
+        {this.renderColumnSelection()}
 
         <Button
           color="primary"

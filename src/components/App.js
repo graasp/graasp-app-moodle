@@ -61,14 +61,13 @@ export class App extends Component {
     }
   }
 
-  handleChangeLang = lang => {
+  handleChangeLang = (lang) => {
     const { i18n } = this.props;
     i18n.changeLanguage(lang);
   };
 
   render() {
     const { mode, view, headerVisible, ready, standalone } = this.props;
-
     if (!ready) {
       return <Loader />;
     }
