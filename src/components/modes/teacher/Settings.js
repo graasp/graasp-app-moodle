@@ -320,7 +320,7 @@ class Settings extends Component {
           {t(
             'The Moodle instance your connecting to must be configured correctly.',
           )}
-          <a href="https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin/-/tree/master">
+          <a href="https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin">
             {t('Follow this guide for more information')}
           </a>
         </Typography>
