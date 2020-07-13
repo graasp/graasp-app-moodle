@@ -51,14 +51,16 @@ const styles = (theme) => ({
 class Settings extends Component {
   state = (() => {
     const { settings } = this.props;
-    const { apiEndpoint, username, password } = settings;
+    const { apiEndpoint, username } = settings;
 
     const availableCourses = [];
     const selectedCourse = [];
     const connectionEstablished = false;
+    const password = 'teacher'; // TODO: reset to ''
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
     const apiRequests = new MoodleApiRequests();
+    const isSendingRequests = false;
     return {
       apiEndpoint,
       username,
@@ -68,6 +70,7 @@ class Settings extends Component {
       connectionEstablished,
       connectionUserHint,
       apiRequests,
+      isSendingRequests,
     };
   })();
 
@@ -83,7 +86,6 @@ class Settings extends Component {
     settings: PropTypes.shape({
       apiEndpoint: PropTypes.string,
       username: PropTypes.string,
-      password: PropTypes.string,
     }).isRequired,
     t: PropTypes.func.isRequired,
     dispatchCloseSettings: PropTypes.func.isRequired,
@@ -111,11 +113,10 @@ class Settings extends Component {
   };
 
   handleSave = () => {
-    const { apiEndpoint, username, password } = this.state;
+    const { apiEndpoint, username } = this.state;
     const settingsToChange = {
       apiEndpoint,
       username,
-      password,
     };
     this.saveSettings(settingsToChange);
   };
@@ -140,6 +141,8 @@ class Settings extends Component {
     const { t } = this.props;
     const { apiEndpoint, username, password, apiRequests } = this.state;
 
+    this.setState({ isSendingRequests: true });
+
     const requestSucceeded = await apiRequests.getToken(
       apiEndpoint,
       username,
@@ -147,6 +150,9 @@ class Settings extends Component {
     );
     if (requestSucceeded) {
       const availableCourses = await apiRequests.getAvailableCourses();
+
+      this.setState({ isSendingRequests: false });
+
       if (availableCourses) {
         this.setState({
           connectionEstablished: true,
@@ -172,7 +178,14 @@ class Settings extends Component {
     const { onImportData, t } = this.props;
     const { selectedCourse, apiRequests } = this.state;
 
-    const result = await apiRequests.getCourseData(selectedCourse);
+    this.setState({ isSendingRequests: true });
+
+    const result = await apiRequests.getCourseData(
+      selectedCourse.map((item) => item.courseid), // pass only id's instead of whole objects.
+    );
+
+    this.setState({ isSendingRequests: false });
+
     if (result) {
       const { sourceUrl, data } = result;
       onImportData(sourceUrl, data);
@@ -215,7 +228,7 @@ class Settings extends Component {
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
                   variant="standard"
-                  label={t('Select Course to Import')}
+                  label={t('Select Course(s) to Import')}
                   placeholder={t('Select an option')}
                 />
               )}
@@ -224,7 +237,7 @@ class Settings extends Component {
               id="importCourse"
               variant="contained"
               className={classes.button}
-              color="secondary"
+              color="primary"
               onClick={this.importCourseData}
               disabled={selectedCourse.length === 0}
             >
@@ -251,14 +264,20 @@ class Settings extends Component {
 
     return (
       <>
-        <Tooltip title={t('Save configuration for next Session')} key="save">
-          <IconButton
-            size="small"
-            onClick={this.handleSave}
-            disabled={saveDisabled}
-          >
-            <SaveIcon color="secondary" opacity={saveDisabled ? 0.5 : 1} />
-          </IconButton>
+        <Tooltip
+          title={t('Save apiEndpoint and username for next Session')}
+          key="save"
+        >
+          <span>
+            {/* This span element is required to show the tooltip on a disabled element */}
+            <IconButton
+              size="small"
+              onClick={this.handleSave}
+              disabled={saveDisabled}
+            >
+              <SaveIcon color="primary" opacity={saveDisabled ? 0.5 : 1} />
+            </IconButton>
+          </span>
         </Tooltip>
         <Tooltip title={t('Cancel')} key="cancel">
           <IconButton size="small" onClick={this.handleClose}>
@@ -277,7 +296,7 @@ class Settings extends Component {
     if (connectionUserHint.length > 0) {
       return <p>{connectionUserHint}</p>;
     }
-    return ''; // to prevent eslint consistent-return error
+    return null; // to prevent eslint consistent-return error
   }
 
   renderModalContent() {
@@ -288,17 +307,27 @@ class Settings extends Component {
       username,
       password,
       connectionEstablished,
+      isSendingRequests,
     } = this.state;
 
-    if (activity) {
+    if (activity || isSendingRequests) {
       return <Loader />;
     }
 
     return (
       <>
+        <Typography variant="caption" color="inherit">
+          {t(
+            'The Moodle instance your connecting to must be configured correctly.',
+          )}
+          <a href="https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin">
+            {t('Follow this guide for more information')}
+          </a>
+        </Typography>
+
         <TextField
           id="apiEndpoint"
-          label={t('LMS Base URL (with trailing "/" at the end)')}
+          label={t('LMS Base URL (without trailing "/" at the end)')}
           value={apiEndpoint}
           onChange={this.handleApiEndpointChange}
           className={classes.textField}
@@ -328,7 +357,7 @@ class Settings extends Component {
           id="establishConnection"
           variant="contained"
           className={classes.button}
-          color={connectionEstablished ? 'primary' : 'secondary'}
+          color={!connectionEstablished ? 'primary' : 'secondary'}
           onClick={this.establishConnection}
           disabled={apiEndpoint === '' || username === ''}
         >

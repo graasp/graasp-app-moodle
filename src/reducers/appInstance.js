@@ -13,7 +13,6 @@ const DEFAULT_SETTINGS = {
   headerVisible: false,
   apiEndpoint: '',
   username: '',
-  password: '',
 };
 
 const INITIAL_STATE = {

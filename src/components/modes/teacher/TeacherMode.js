@@ -13,7 +13,7 @@ class TeacherMode extends Component {
   };
 
   static defaultProps = {
-    view: 'normal',
+    view: DEFAULT_VIEW,
     appInstanceId: null,
   };
 

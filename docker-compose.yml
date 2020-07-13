@@ -1,0 +1,41 @@
+version: '2'
+services:
+  moodle-db:
+    build: ./docker-auxillaries/mariadb-img
+    environment:
+      - MARIADB_USER=bn_moodle
+      - MARIADB_DATABASE=bitnami_moodle
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - 'mariadb_data:/bitnami'
+  moodle-web-server:
+    build: ./docker-auxillaries/moodle-img
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=bn_moodle
+      - MOODLE_DATABASE_NAME=bitnami_moodle
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MOODLE_USERNAME=user
+      - MOODLE_PASSWORD=bitnami
+      - MOODLE_EMAIL=user@example.com
+      - MOODLE_SKIP_INSTALL=yes
+    ports:
+      - '8082:80'
+    #      - '443:443'
+    volumes:
+      - '/moodle_data:/bitnami'
+    depends_on:
+      - moodle-db
+  graasp-moodle-app:
+    build: .
+    ports:
+      - '8000:3000'
+    # Allows to run the react-app that depends on a interactive terminal in v.3.4.1
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+volumes:
+  mariadb_data:
+    driver: local
+  moodle_data:
+    driver: local
