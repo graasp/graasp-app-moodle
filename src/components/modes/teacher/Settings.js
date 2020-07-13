@@ -237,7 +237,7 @@ class Settings extends Component {
               id="importCourse"
               variant="contained"
               className={classes.button}
-              color="secondary"
+              color="primary"
               onClick={this.importCourseData}
               disabled={selectedCourse.length === 0}
             >
@@ -357,7 +357,7 @@ class Settings extends Component {
           id="establishConnection"
           variant="contained"
           className={classes.button}
-          color={connectionEstablished ? 'primary' : 'secondary'}
+          color={!connectionEstablished ? 'primary' : 'secondary'}
           onClick={this.establishConnection}
           disabled={apiEndpoint === '' || username === ''}
         >
