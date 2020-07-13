@@ -228,7 +228,7 @@ class Settings extends Component {
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
                   variant="standard"
-                  label={t('Select Course to Import')}
+                  label={t('Select Course(s) to Import')}
                   placeholder={t('Select an option')}
                 />
               )}
