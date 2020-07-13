@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/graasp/graasp-app-moodle/compare/v0.1.1...v0.1.2) (2020-07-13)
+
+### Features
+
+- add default pw ([b29971e](https://github.com/graasp/graasp-app-moodle/commit/b29971e9ee1721a8d3efe11fc55116cb68f800df))
+- add docker containers ([d058907](https://github.com/graasp/graasp-app-moodle/commit/d058907c7a6331c83f58d74b7af22555c268a126))
+- disable save filtered button when none ([e5bbd33](https://github.com/graasp/graasp-app-moodle/commit/e5bbd33f09e0b0a490a2547d77601ecb17e2fd3a))
+- display loader when requests are sent ([995614f](https://github.com/graasp/graasp-app-moodle/commit/995614f9b0518d0dce8382cb4bcd43d3d02a410e))
+- enable test runs and save results ([1d1e482](https://github.com/graasp/graasp-app-moodle/commit/1d1e482b635b380561df67bb2ca59e8ac60e0820))
+- load available columns dynamically from data ([40d6a8b](https://github.com/graasp/graasp-app-moodle/commit/40d6a8b3d90c166715b661d6c2c81ae490699828))
+- show info about required plugin in settings ([ed57b1d](https://github.com/graasp/graasp-app-moodle/commit/ed57b1dda32b9c34f74844a3afb7e6416af3734a))
+
+### Bug Fixes
+
+- add missing /^to query string ([0240618](https://github.com/graasp/graasp-app-moodle/commit/0240618e37710593e09279d924405738e598a684))
+- remove password in clear from storage ([ab90a6e](https://github.com/graasp/graasp-app-moodle/commit/ab90a6e0433b47aa167635534fee16746c8bfc6b))
+- rename the title in the header to "moodle" ([6992886](https://github.com/graasp/graasp-app-moodle/commit/699288630d517cce0cf4f362cb1b7a909f53aa40))
+- shorten url to moodle plugin ([13ebd37](https://github.com/graasp/graasp-app-moodle/commit/13ebd37ba9b46b6a2ea0e44537f527f97c7eafd7))
+- typoe in label ([743c63c](https://github.com/graasp/graasp-app-moodle/commit/743c63ccbbe03775c101ac128bc3b4f56879b080))
+
+### Tests
+
+- save buttons disabled states ([8f04f94](https://github.com/graasp/graasp-app-moodle/commit/8f04f94d0c9e7d4cf89d6277ab882af8e3a791c7))
+
 ### [0.1.1](https://github.com/graasp/graasp-app-moodle/compare/v0.1.0...v0.1.1) (2020-07-06)
 
 ### Features
