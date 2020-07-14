@@ -1,7 +1,7 @@
 version: '2'
 services:
   moodle-db:
-    build: ./docker-auxillaries/mariadb-img
+    build: ./docker-auxilliaries/mariadb-img
     environment:
       - MARIADB_USER=bn_moodle
       - MARIADB_DATABASE=bitnami_moodle
@@ -9,9 +9,9 @@ services:
     volumes:
       - 'mariadb_data:/bitnami'
   moodle-web-server:
-    build: ./docker-auxillaries/moodle-img
+    build: ./docker-auxilliaries/moodle-img
     environment:
-      - MARIADB_HOST=mariadb
+      - MARIADB_HOST=moodle-db
       - MARIADB_PORT_NUMBER=3306
       - MOODLE_DATABASE_USER=bn_moodle
       - MOODLE_DATABASE_NAME=bitnami_moodle
@@ -24,7 +24,7 @@ services:
       - '8082:80'
     #      - '443:443'
     volumes:
-      - '/moodle_data:/bitnami'
+      - 'moodle_data:/bitnami'
     depends_on:
       - moodle-db
   graasp-moodle-app:

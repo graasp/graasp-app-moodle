@@ -5,7 +5,7 @@ FROM bitnami/moodle:3.8.0
 RUN apt update
 RUN apt upgrade -y
 
-# TODO temporarly install vim. Can be removed later again
+# TODO temporarly install vim for testing inside the container. Can be removed later again
 RUN apt install -y vim
 
 # Install git and clone plugin (be careful with new versions of plugin, that are not yet included in DB dump)
