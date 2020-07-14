@@ -22,7 +22,7 @@ services:
       - MOODLE_SKIP_INSTALL=yes
     ports:
       - '8082:80'
-    #      - '443:443'
+    # - '443:443' # uncomment to enable HTTPS port
     volumes:
       - 'moodle_data:/bitnami'
     depends_on:

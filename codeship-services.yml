@@ -1,14 +1,14 @@
 app:
-  build: .
-  dockerfile: Dockerfile
-  environment:
-    - APP_URL=app
-    - MOODLE_URL=moodle-web-server
+  build:
+    context: .
+    dockerfile: Dockerfile
+    image: codeship/graasp-app
 
 moodle-db:
   build:
     context: ./docker-auxilliaries/mariadb-img/
-    dockerfile: ./docker-auxilliaries/mariadb-img/Dockerfile
+    image: codeship/moodle-db
+    dockerfile: Dockerfile
   environment:
     - MARIADB_USER=bn_moodle
     - MARIADB_DATABASE=bitnami_moodle
@@ -17,7 +17,8 @@ moodle-db:
 moodle-web-server:
   build:
     context: ./docker-auxilliaries/moodle-img/
-    dockerfile: ./docker-auxilliaries/moodle-img/Dockerfile
+    image: codeship/moodle-web-server
+    dockerfile: Dockerfile
   environment:
     - MARIADB_HOST=moodle-db
     - MARIADB_PORT_NUMBER=3306
@@ -28,6 +29,21 @@ moodle-web-server:
     - MOODLE_PASSWORD=bitnami
     - MOODLE_EMAIL=user@example.com
     - MOODLE_SKIP_INSTALL=yes
+  depends_on:
+    - moodle-db
+
+cypress:
+  build:
+    context: .
+    image: codeship/cypress
+    dockerfile: ./docker-auxilliaries/cypress-img/Dockerfile
+  environment:
+    - APP_URL=app:3000
+    - MOODLE_URL=moodle-web-server
+  depends_on:
+    - moodle-db
+    - moodle-web-server
+    - app
 
 build-dev:
   build: .

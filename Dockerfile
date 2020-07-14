@@ -12,4 +12,9 @@ RUN yarn install --silent
 # add app
 COPY . .
 
-CMD ["yarn", "start"]
+HEALTHCHECK --interval=1m --timeout=10s --start-period=30s --retries=20  \
+  CMD curl --fail http://localhost:3000 || exit 1
+
+# Force redirect of console output to prevent console clearing upon start
+CMD FORCE_COLOR=true yarn start | cat
+# CMD ["yarn", "start"]

@@ -56,7 +56,8 @@
     "report": "cat ./coverage/lcov.info | codacy-coverage",
     "eject": "react-scripts eject",
     "release": "git fetch --tags && git add CHANGELOG.md && standard-version -a",
-    "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release"
+    "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release",
+    "cy:run": "cypress run --env MOODLE_URL=moodle-web-server,APP_URL=app:3000"
   },
   "devDependencies": {
     "@commitlint/cli": "9.0.1",

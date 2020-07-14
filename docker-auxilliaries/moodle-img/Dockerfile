@@ -12,4 +12,6 @@ RUN apt install -y vim
 RUN apt install -y git
 RUN git clone https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin.git /bitnami/moodle/local/wafed_moodle_webservice_plugin
 
-
+# Define the healthcheck measure
+HEALTHCHECK --interval=1m --timeout=10s --retries=20 \
+  CMD curl --fail http://localhost || exit 1
