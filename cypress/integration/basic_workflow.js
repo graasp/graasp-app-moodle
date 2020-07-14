@@ -1,13 +1,15 @@
 // The user MUST be enrolled as teacher in at least 1 course
 const MOODLE_API_ENDPOINT = Cypress.env('MOODLE_URL')
   ? Cypress.env('MOODLE_URL')
-  : 'http://localhost:8082';
+  : // : 'http://localhost:8082';
+    'http://localhost/moodle';
 const MOODLE_USERNAME = 'teacher';
 const MOODLE_PASSWORD = 'teacher';
 
 const GRAASP_URL = Cypress.env('APP_URL')
   ? Cypress.env('APP_URL')
-  : 'http://localhost:8000';
+  : // : 'http://localhost:8000';
+    'http://localhost:3000';
 const APP_INSTANCE_ID = '6156e70ab253020033364411';
 const GRAASP_TEACHER_APP_URL = `${GRAASP_URL}/?spaceId=5b56e70ab253020033364411&appInstanceId=${APP_INSTANCE_ID}&mode=teacher&userId=5b56e70ab253020033364416&dev=true`;
 
@@ -16,12 +18,11 @@ const saveFilteredButtonId = '#saveFilteredAsAppInstanceResourceButton';
 const apiEndpointTextFieldId = '#apiEndpoint';
 const usernameTextFieldId = '#username';
 const passwordTextFieldId = '#password';
-const establishConnectionButtonId =
-  '#establishConnection'; /*
+const establishConnectionButtonId = '#establishConnection';
 const importCourseButtonId = '#importCourse';
 const courseSelectionInputId = '#courseSelection';
 const targetFilterInputId = '#filter-target';
-const deleteAppInstanceButtonClass = '.deleteAppInstanceButton'; */
+const deleteAppInstanceButtonClass = '.deleteAppInstanceButton';
 
 describe('Import data from Moodle', () => {
   it('Opens the Graasp App', () => {
@@ -58,9 +59,8 @@ describe('Import data from Moodle', () => {
     });
 
     // TODO: must wait here until the courses are loaded
-    /*
     it('Imports data of a course', () => {
-      cy.contains('Select Course to Import');
+      cy.contains('Select Course(s) to Import');
       cy.get(importCourseButtonId).should('be.disabled');
 
       // Select the first available course and import it
@@ -70,16 +70,14 @@ describe('Import data from Moodle', () => {
       cy.get(importCourseButtonId).click();
       cy.contains('created'); // specific action type used at least once when "creating" a moodle course
     });
-    */
   });
-  /*
+
   describe('Saves the Imported Data as App Instance Resource', () => {
     /* 
       first, delete any possible ressources. This is action is performed just at
       this stage, because resources are loadad async. And if placed at the very 
       beginning of the test, they aren't present yet.
     */
-  /*
     it('Deletes any previous saved resources', () => {
       if (
         document.getElementsByClassName('deleteAppInstanceButton').length > 0
@@ -113,5 +111,4 @@ describe('Import data from Moodle', () => {
       cy.get(deleteAppInstanceButtonClass).click({ multiple: true });
     });
   });
-  */
 });
