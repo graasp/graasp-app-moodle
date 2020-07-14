@@ -12,4 +12,4 @@
       command: yarn test
     - name: integration-test
       service: app
-      command: yarn run cypress run
+      command: yarn run cypress open --env MOODLE_URL=moodle-web-server,APP_URL=app
