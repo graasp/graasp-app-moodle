@@ -60,6 +60,7 @@ class Settings extends Component {
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
     const apiRequests = new MoodleApiRequests();
+    const isSendingRequests = false;
     return {
       apiEndpoint,
       username,
@@ -69,6 +70,7 @@ class Settings extends Component {
       connectionEstablished,
       connectionUserHint,
       apiRequests,
+      isSendingRequests,
     };
   })();
 
@@ -139,6 +141,8 @@ class Settings extends Component {
     const { t } = this.props;
     const { apiEndpoint, username, password, apiRequests } = this.state;
 
+    this.setState({ isSendingRequests: true });
+
     const requestSucceeded = await apiRequests.getToken(
       apiEndpoint,
       username,
@@ -146,6 +150,9 @@ class Settings extends Component {
     );
     if (requestSucceeded) {
       const availableCourses = await apiRequests.getAvailableCourses();
+
+      this.setState({ isSendingRequests: false });
+
       if (availableCourses) {
         this.setState({
           connectionEstablished: true,
@@ -171,9 +178,14 @@ class Settings extends Component {
     const { onImportData, t } = this.props;
     const { selectedCourse, apiRequests } = this.state;
 
+    this.setState({ isSendingRequests: true });
+
     const result = await apiRequests.getCourseData(
       selectedCourse.map((item) => item.courseid), // pass only id's instead of whole objects.
     );
+
+    this.setState({ isSendingRequests: false });
+
     if (result) {
       const { sourceUrl, data } = result;
       onImportData(sourceUrl, data);
@@ -216,7 +228,7 @@ class Settings extends Component {
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
                   variant="standard"
-                  label={t('Select Course to Import')}
+                  label={t('Select Course(s) to Import')}
                   placeholder={t('Select an option')}
                 />
               )}
@@ -225,7 +237,7 @@ class Settings extends Component {
               id="importCourse"
               variant="contained"
               className={classes.button}
-              color="secondary"
+              color="primary"
               onClick={this.importCourseData}
               disabled={selectedCourse.length === 0}
             >
@@ -295,14 +307,24 @@ class Settings extends Component {
       username,
       password,
       connectionEstablished,
+      isSendingRequests,
     } = this.state;
 
-    if (activity) {
+    if (activity || isSendingRequests) {
       return <Loader />;
     }
 
     return (
       <>
+        <Typography variant="caption" color="inherit">
+          {t(
+            'The Moodle instance your connecting to must be configured correctly.',
+          )}
+          <a href="https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin">
+            {t('Follow this guide for more information')}
+          </a>
+        </Typography>
+
         <TextField
           id="apiEndpoint"
           label={t('LMS Base URL (without trailing "/" at the end)')}
@@ -335,7 +357,7 @@ class Settings extends Component {
           id="establishConnection"
           variant="contained"
           className={classes.button}
-          color={connectionEstablished ? 'primary' : 'secondary'}
+          color={!connectionEstablished ? 'primary' : 'secondary'}
           onClick={this.establishConnection}
           disabled={apiEndpoint === '' || username === ''}
         >
