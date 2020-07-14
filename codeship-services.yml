@@ -2,8 +2,8 @@ app:
   build: .
   dockerfile: Dockerfile
   environment:
-    - APP_URL: app
-    - MOODLE_URL: moodle-web-server
+    - APP_URL=app
+    - MOODLE_URL=moodle-web-server
   links: moodle-web-server
 
 moodle-db:
