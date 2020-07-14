@@ -4,7 +4,6 @@ app:
   environment:
     - APP_URL=app
     - MOODLE_URL=moodle-web-server
-  links: moodle-web-server
 
 moodle-db:
   build:
@@ -29,8 +28,6 @@ moodle-web-server:
     - MOODLE_PASSWORD=bitnami
     - MOODLE_EMAIL=user@example.com
     - MOODLE_SKIP_INSTALL=yes
-  links:
-    - moodle-db
 
 build-dev:
   build: .
