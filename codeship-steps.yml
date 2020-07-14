@@ -1,0 +1,15 @@
+# default
+# -------
+# always run the tests and lint the codebase
+- name: default
+  type: serial
+  steps:
+    - name: lint
+      service: app
+      command: yarn lint
+    - name: test
+      service: app
+      command: yarn test
+    - name: integration-test
+      service: app
+      command: yarn run cypress run
