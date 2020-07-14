@@ -69,26 +69,6 @@ describe('Import data from Moodle', () => {
     });
   });
 
-  /* TODO does currently not work because the table has been replaced with a MUI-Datatable.
-  it('Filter Imported Data', () => {
-    cy.get('table:last').as('dataTable');
-    cy.get('@dataTable')
-      .find('tr')
-      .its('length')
-      .then(($initialLength) => {
-        cy.get(targetFilterInputId).click();
-        cy.get(targetFilterInputId).type('course');
-        cy.focused().type('{downArrow}{enter}', { force: true });
-        cy.get('@dataTable')
-          .find('tr')
-          .its('length')
-          .then(($filteredLength) => {
-            expect($initialLength).to.be.greaterThan($filteredLength);
-          });
-      });
-  });
-  */
-
   describe('Saves the Imported Data as App Instance Resource', () => {
     /* 
       first, delete any possible ressources. This is action is performed just at
