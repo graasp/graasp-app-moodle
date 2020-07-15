@@ -11,8 +11,5 @@
     #      service: app
     #      command: yarn test
     - name: integration-test
-      service: app
-      type: parallel
-      steps:
-        - command: yarn start:ci
-        - command: 'sleep 60 && yarn cy:run'
+      service: cypress
+      command: npx cypress run --config screenshotOnRunFailure=false,video=false --env APP_URL=http://app:3000 --browser chrome

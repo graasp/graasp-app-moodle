@@ -1,8 +1,8 @@
-FROM cypress/base:12
-WORKDIR /app
+FROM cypress/browsers:chrome69
+
+RUN npm init -y
+RUN npm i cypress
 
 COPY cypress.json ./
-COPY package.json ./
 COPY cypress ./cypress
-# Install npm dependencies, can also use "npm ci"
-RUN npm install
+
