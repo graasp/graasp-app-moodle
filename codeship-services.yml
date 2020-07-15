@@ -3,7 +3,8 @@ app:
     context: .
     dockerfile: Dockerfile
     image: codeship/graasp-app
-
+  encrypted_env_file:
+    - env.test.encrypted
 moodle-db:
   build:
     context: ./docker-auxilliaries/mariadb-img/
