@@ -1,4 +1,4 @@
-app.com:
+app:
   build:
     context: .
     dockerfile: Dockerfile
@@ -38,13 +38,9 @@ cypress:
     context: .
     image: codeship/cypress
     dockerfile: ./docker-auxilliaries/cypress-img/Dockerfile
-  environment:
-    - APP_URL=http://app.com:3000
-    - MOODLE_URL=moodle-web-server
   depends_on:
-    - moodle-db
-    - moodle-web-server
-    - app.com
+    #  - moodle-web-server
+    - app
 
 build-dev:
   build: .
