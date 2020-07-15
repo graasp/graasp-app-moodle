@@ -15,4 +15,4 @@
       type: parallel
       steps:
         - command: yarn start:ci
-        - command: 'sleep 60 && yarn run cy:run'
+        - command: 'sleep 60 && yarn cy:run'
