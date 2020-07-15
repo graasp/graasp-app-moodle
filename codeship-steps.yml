@@ -11,5 +11,5 @@
     #      service: app
     #      command: yarn test
     - name: integration-test
-      service: cypress
+      service: app
       command: npm run cy:run
