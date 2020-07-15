@@ -12,4 +12,7 @@
     #      command: yarn test
     - name: integration-test
       service: app
-      command: npm run cy:run
+      type: parallel
+      steps:
+        - command: yarn start:ci
+        - command: 'sleep 60 && yarn run cy:run'
