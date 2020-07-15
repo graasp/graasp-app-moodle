@@ -4,6 +4,7 @@ app:
     dockerfile: Dockerfile
     image: codeship/graasp-app
   encrypted_env_file: .env.test.encrypted
+
 moodle-db:
   build:
     context: ./docker-auxilliaries/mariadb-img/
@@ -38,7 +39,7 @@ cypress:
     image: codeship/cypress
     dockerfile: ./docker-auxilliaries/cypress-img/Dockerfile
   environment:
-    - APP_URL=app:3000
+    - APP_URL=http://app:3000
     - MOODLE_URL=moodle-web-server
   depends_on:
     - moodle-db

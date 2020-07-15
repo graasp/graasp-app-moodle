@@ -12,4 +12,4 @@
     #      command: yarn test
     - name: integration-test
       service: cypress
-      command: npm run cy:run --env MOODLE_URL=moodle-web-server,APP_URL=app:3000
+      command: npm run cy:run
