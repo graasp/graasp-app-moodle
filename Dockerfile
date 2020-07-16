@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apt-get update -y
 RUN apt-get install -y libgtk2.0-0 libgtk-3-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 # manual dependency install because of node slime base image https://github.com/bahmutov/start-server-and-test/issues/132#issuecomment-448581335
-RUN apt-get update && sudo apt-get -y install procps
+RUN apt-get update && apt-get -y install procps
 
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH /app/node_modules/.bin:$PATH
