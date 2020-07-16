@@ -13,3 +13,35 @@
     - name: integration-test
       service: data-aggregation-module
       command: yarn try:ssat
+
+# development
+# ----------
+# deploys to development environment when merging to develop branch
+- name: dev
+  tag: master
+  type: serial
+  steps:
+    - name: build-dev
+      service: build-dev
+      command: yarn build
+    - name: deploy-dev
+      service: aws-dev
+      command: /deploy/scripts/deploy.sh -b /deploy/build
+
+# production
+# ----------
+# runs when pushing a version tag and requires manual approval before deploying to production
+- type: manual
+  name: prod
+  # matches v<major>.<minor>.<patch>[-<meta>] version format
+  tag: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\-[0-9A-Za-z]*)?$
+  steps:
+    - name: release-prod
+      type: serial
+      steps:
+        - name: build-prod
+          service: build-prod
+          command: yarn build
+        - name: deploy-prod
+          service: aws-prod
+          command: /deploy/scripts/deploy.sh -b /deploy/build
