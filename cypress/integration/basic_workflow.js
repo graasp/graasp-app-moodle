@@ -96,13 +96,8 @@ describe('Import data from Moodle', () => {
       cy.get(saveFilteredButtonId).should('not.be.disabled');
     });
 
-    it('Saves the current data', () => {
+    it('Saves the current data as resource', () => {
       cy.get(saveUnfilteredButtonId).click();
-      cy.get('table')
-        .find('td')
-        .contains(APP_INSTANCE_ID)
-        .next()
-        .contains(MOODLE_API_ENDPOINT);
     });
 
     it('Deletes the saved resources', () => {
