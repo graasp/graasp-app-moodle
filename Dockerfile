@@ -1,4 +1,4 @@
-FROM node:14.5.0
+FROM mhart/alpine-node:12
 
 WORKDIR /app
 
@@ -16,11 +16,15 @@ RUN yarn install --silent
 # add app
 COPY . .
 
+# install helper libraries for testing
+#RUN npm install wait-on
+RUN npm install --save-dev start-server-and-test
+
 # expose the port 
 EXPOSE 3000
 
 # define when the container is ready
-HEALTHCHECK --interval=1m --timeout=30s --start-period=30s --retries=20  \
+HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=20  \
   CMD curl --fail http://localhost:3000 || exit 1
 
 # Force redirect of console output to prevent console clearing upon start

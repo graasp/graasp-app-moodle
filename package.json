@@ -59,7 +59,9 @@
     "eject": "react-scripts eject",
     "release": "git fetch --tags && git add CHANGELOG.md && standard-version -a",
     "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release",
-    "cy:run": "cypress run --config video=false --env APP_URL=http://localhost:3000,MOODLE_URL=moodle-web-server"
+    "cy:run": "cypress run --config video=false --env APP_URL=http://localhost:3000,MOODLE_URL=moodle-web-server",
+    "try:ssat": "start-server-and-test start:ci http-get://localhost:3000 cy:run",
+    "try:wo": "start:ci & wait-on http://localhost:3000"
   },
   "devDependencies": {
     "@commitlint/cli": "9.0.1",
