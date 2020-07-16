@@ -233,36 +233,38 @@ export class TeacherView extends Component {
         // Skip the column time created. This would require a more suitable filter solution like a date range selector
         if (column === 'timecreated') return;
         renderedFilters.push(
-          <Autocomplete
-            id={`filter-${column}`}
-            key={`filter-${column}`}
-            multiple
-            filterSelectedOptions
-            options={filters[column].options}
-            values={filters[column].selection}
-            onChange={(event, newValue) => {
-              // 1. Make a shallow copy of the items
-              const updatedFilters = { ...filters };
-              // 2. Make a shallow copy of the item you want to mutate
-              const filter = { ...updatedFilters[column] };
-              // 3. Replace the property you're intested in
-              filter.selection = newValue;
-              // 4. Put it back into our array
-              updatedFilters[column] = filter;
-              // 5. Set the state to our new copy
-              this.setState({ filters: updatedFilters });
-            }}
-            getOptionLabel={(option) => String(option)}
-            renderInput={(params) => (
-              <TextField
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...params}
-                variant="standard"
-                label={column}
-                placeholder={t('Select an option')}
-              />
-            )}
-          />,
+          <Grid item sm={6} md={3} xl={2}>
+            <Autocomplete
+              id={`filter-${column}`}
+              key={`filter-${column}`}
+              multiple
+              filterSelectedOptions
+              options={filters[column].options}
+              values={filters[column].selection}
+              onChange={(event, newValue) => {
+                // 1. Make a shallow copy of the items
+                const updatedFilters = { ...filters };
+                // 2. Make a shallow copy of the item you want to mutate
+                const filter = { ...updatedFilters[column] };
+                // 3. Replace the property you're intested in
+                filter.selection = newValue;
+                // 4. Put it back into our array
+                updatedFilters[column] = filter;
+                // 5. Set the state to our new copy
+                this.setState({ filters: updatedFilters });
+              }}
+              getOptionLabel={(option) => String(option)}
+              renderInput={(params) => (
+                <TextField
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...params}
+                  variant="standard"
+                  label={column}
+                  placeholder={t('Select an option')}
+                />
+              )}
+            />
+          </Grid>,
         );
       });
     }
@@ -311,7 +313,9 @@ export class TeacherView extends Component {
           {t('Options')}
         </Typography>
 
-        {this.renderImportedDataTableFilters()}
+        <Grid container spacing={1}>
+          {this.renderImportedDataTableFilters()}
+        </Grid>
 
         {this.renderColumnSelection()}
 
@@ -400,11 +404,10 @@ export class TeacherView extends Component {
             </Typography>
             <Paper className={classes.root}>
               <Grid container spacing={1} className={classes.gridNoSpace}>
-                {/* requires flex-grow to fill width on smaller screens */}
-                <Grid item md={3} style={{ flexGrow: 1 }}>
+                <Grid item xs={12}>
                   {this.renderImportedDataTableConfiguration()}
                 </Grid>
-                <Grid item md>
+                <Grid item xs={12}>
                   {this.renderImportedDataTable()}
                 </Grid>
               </Grid>
