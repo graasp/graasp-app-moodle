@@ -31,7 +31,9 @@
     "redux": "4.0.5",
     "redux-devtools-extension": "2.13.8",
     "redux-promise": "0.6.0",
-    "redux-thunk": "2.3.0"
+    "redux-thunk": "2.3.0",
+    "start-server-and-test": "1.11.2",
+    "wait-on": "5.1.0"
   },
   "scripts": {
     "start": "npm-run-all --parallel start:local start:api",

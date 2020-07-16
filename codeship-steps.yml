@@ -12,5 +12,5 @@
     #      command: yarn test
     - name: integration-test
       service: app
-      # command: npx cypress run --config screenshotOnRunFailure=false,video=false --env APP_URL=http://app:3000 --browser chrome
+      # command: npx cypress run --config screenshotOnRunFailure=false,video=false --env APP_URL=http://app:3000
       command: yarn try:ssat

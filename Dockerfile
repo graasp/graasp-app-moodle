@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:12
+FROM node:12.14-slim
 
 WORKDIR /app
 
@@ -15,10 +15,6 @@ RUN yarn install --silent
 
 # add app
 COPY . .
-
-# install helper libraries for testing
-#RUN npm install wait-on
-RUN npm install --save-dev start-server-and-test
 
 # expose the port 
 EXPOSE 3000
