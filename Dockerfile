@@ -2,9 +2,10 @@ FROM node:12.14-slim
 
 WORKDIR /app
 
-# install cypress dependencies
+# install cypress dependencies and browsers
 RUN apt-get update -y
 RUN apt-get install -y libgtk2.0-0 libgtk-3-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+RUN apt-get install -y chromium
 
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH /app/node_modules/.bin:$PATH
