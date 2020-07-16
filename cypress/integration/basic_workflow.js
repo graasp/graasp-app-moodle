@@ -34,9 +34,9 @@ describe('Import data from Moodle', () => {
   });
 
   describe('Import a course', () => {
-    it('Opens Settings', () => {
+    it('Opens Import Configuration', () => {
       cy.get('button[aria-label="Settings"]').click();
-      cy.contains('Settings');
+      cy.contains('Import Configuration');
     });
 
     it('Checks that establish connection button is disabled when fields are empty', () => {
@@ -47,7 +47,7 @@ describe('Import data from Moodle', () => {
       cy.get(establishConnectionButtonId).should('be.disabled');
     });
 
-    it('Establishs the connection', () => {
+    it('Establishes the connection', () => {
       cy.get(apiEndpointTextFieldId).type(MOODLE_API_ENDPOINT);
       cy.get(usernameTextFieldId).type(MOODLE_USERNAME);
       cy.get(passwordTextFieldId).type(MOODLE_PASSWORD);
@@ -56,7 +56,6 @@ describe('Import data from Moodle', () => {
       cy.get(establishConnectionButtonId).contains('Connection Established');
     });
 
-    // TODO: must wait here until the courses are loaded
     it('Imports data of a course', () => {
       cy.contains('Select Course(s) to Import');
       cy.get(importCourseButtonId).should('be.disabled');
