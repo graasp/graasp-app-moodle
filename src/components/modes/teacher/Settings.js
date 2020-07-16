@@ -392,7 +392,7 @@ class Settings extends Component {
         >
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="h5" id="modal-title">
-              {t('Settings')}
+              {t('Import Configuration')}
             </Typography>
             {this.renderModalContent()}
           </div>
