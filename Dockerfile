@@ -23,6 +23,6 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=20  \
   CMD curl --fail http://localhost:3000 || exit 1
 
-# Force redirect of console output to prevent console clearing upon start
+# force redirect of console output to prevent console clearing upon start
 CMD FORCE_COLOR=true yarn start:ci | cat
 # CMD ["yarn", "start"]

@@ -11,6 +11,5 @@
     #      service: app
     #      command: yarn test
     - name: integration-test
-      service: app
-      # command: npx cypress run --config screenshotOnRunFailure=false,video=false --env APP_URL=http://app:3000
+      service: data-aggregation-module
       command: yarn try:ssat

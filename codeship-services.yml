@@ -1,3 +1,12 @@
+data-aggregation-module:
+  build:
+    context: .
+    dockerfile: Dockerfile
+    image: codeship/graasp-app
+  encrypted_env_file: .env.test.encrypted
+  depends_on:
+    - moodle-web-server
+
 app:
   build:
     context: .
@@ -32,15 +41,6 @@ moodle-web-server:
     - MOODLE_SKIP_INSTALL=yes
   depends_on:
     - moodle-db
-
-cypress:
-  build:
-    context: .
-    image: codeship/cypress
-    dockerfile: ./docker-auxilliaries/cypress-img/Dockerfile
-  depends_on:
-    #  - moodle-web-server
-    - app
 
 build-dev:
   build: .
