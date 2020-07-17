@@ -1,4 +1,4 @@
-import ApiRequests from './ApiRequests';
+import APIRequests from './APIRequests';
 import { buildUrlWithQueryParams } from '../utils/url';
 
 const TOKEN_ENDPOINT = 'login/token.php';
@@ -7,7 +7,7 @@ const WEB_SERVICE_ENDPOINT = 'webservice/rest/server.php';
 /**
  * Will be set once the connection is established.
  */
-class MoodleApiRequests extends ApiRequests {
+class MoodleAPIRequests extends APIRequests {
   /**
    * Get a token for future authentication and store it locally.
    * @param {string} lmsBaseUrl which should be used to send this and the following requests to
@@ -90,4 +90,4 @@ class MoodleApiRequests extends ApiRequests {
   }
 }
 
-export default MoodleApiRequests;
+export default MoodleAPIRequests;

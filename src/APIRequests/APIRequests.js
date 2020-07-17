@@ -8,9 +8,9 @@
  * Each implementation of this class is responsible of storing the lmsBaseUrl and
  * apiToken retrieved in getToken internally in the class.
  */
-class ApiRequests {
+class APIRequests {
   constructor() {
-    if (this.constructor === ApiRequests) {
+    if (this.constructor === APIRequests) {
       throw new Error("Abstract classes can't be instantiated.");
     }
   }
@@ -44,4 +44,4 @@ class ApiRequests {
   }
 }
 
-export default ApiRequests;
+export default APIRequests;

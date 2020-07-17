@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { closeSettings, patchAppInstance } from '../../../actions';
 import Loader from '../../common/Loader';
-import MoodleApiRequests from '../../../apiRequests/MoodleApiRequests';
+import MoodleAPIRequests from '../../../APIRequests/MoodleAPIRequests';
 
 function getModalStyle() {
   const top = 50;
@@ -59,7 +59,7 @@ class Settings extends Component {
     const password = 'teacher'; // TODO: reset to ''
     // Indicates the user how to proceed or what went wrong to establish a connection
     const connectionUserHint = 'Establish a connection to proceed';
-    const apiRequests = new MoodleApiRequests();
+    const apiRequests = new MoodleAPIRequests();
     const isSendingRequests = false;
     return {
       apiEndpoint,
