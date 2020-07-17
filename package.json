@@ -57,13 +57,12 @@
     "test:once": "cross-env CI=true env-cmd -f ./.env.test react-scripts test --env=jsdom",
     "test:coverage": "react-scripts test --env=jsdom --coverage",
     "test:ci": "run-s test:coverage report",
+    "test:integration": "start-server-and-test start:ci http-get://localhost:3000 cy:run",
     "report": "cat ./coverage/lcov.info | codacy-coverage",
     "eject": "react-scripts eject",
     "release": "git fetch --tags && git add CHANGELOG.md && standard-version -a",
     "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release",
-    "cy:run": "cypress run --config video=false,screenshotOnRunFailure=false --env APP_URL=http://localhost:3000,MOODLE_URL=http://moodle-web-server",
-    "try:ssat": "start-server-and-test start:ci http-get://localhost:3000 cy:run",
-    "try:wo": "start:ci & wait-on http://localhost:3000"
+    "cy:run": "cypress run --config video=false,screenshotOnRunFailure=false --env APP_URL=http://localhost:3000,MOODLE_URL=http://moodle-web-server"
   },
   "devDependencies": {
     "@commitlint/cli": "9.0.1",

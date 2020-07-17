@@ -12,7 +12,7 @@
       command: yarn test
     - name: integration-test
       service: data-aggregation-module
-      command: yarn try:ssat
+      command: yarn test:integration
 
 # development
 # ----------
