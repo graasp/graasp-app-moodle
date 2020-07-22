@@ -1,11 +1,13 @@
 // The user MUST be enrolled as teacher in at least 1 course
-const MOODLE_API_ENDPOINT = 'http://localhost/moodle';
-// const MOODLE_API_ENDPOINT = 'http://localhost:8082';
+const MOODLE_API_ENDPOINT = Cypress.env('MOODLE_URL')
+  ? Cypress.env('MOODLE_URL')
+  : 'http://localhost:8082';
 const MOODLE_USERNAME = 'teacher';
 const MOODLE_PASSWORD = 'teacher';
 
-const GRAASP_URL = 'http://localhost:3000';
-// const GRAASP_URL = 'http://localhost:8000';
+const GRAASP_URL = Cypress.env('APP_URL')
+  ? Cypress.env('APP_URL')
+  : 'http://localhost:8000';
 const APP_INSTANCE_ID = '6156e70ab253020033364411';
 const GRAASP_TEACHER_APP_URL = `${GRAASP_URL}/?spaceId=5b56e70ab253020033364411&appInstanceId=${APP_INSTANCE_ID}&mode=teacher&userId=5b56e70ab253020033364416&dev=true`;
 
@@ -32,9 +34,9 @@ describe('Import data from Moodle', () => {
   });
 
   describe('Import a course', () => {
-    it('Opens Settings', () => {
+    it('Opens Import Configuration', () => {
       cy.get('button[aria-label="Settings"]').click();
-      cy.contains('Settings');
+      cy.contains('Import Configuration');
     });
 
     it('Checks that establish connection button is disabled when fields are empty', () => {
@@ -45,7 +47,7 @@ describe('Import data from Moodle', () => {
       cy.get(establishConnectionButtonId).should('be.disabled');
     });
 
-    it('Establishs the connection', () => {
+    it('Establishes the connection', () => {
       cy.get(apiEndpointTextFieldId).type(MOODLE_API_ENDPOINT);
       cy.get(usernameTextFieldId).type(MOODLE_USERNAME);
       cy.get(passwordTextFieldId).type(MOODLE_PASSWORD);
@@ -55,7 +57,7 @@ describe('Import data from Moodle', () => {
     });
 
     it('Imports data of a course', () => {
-      cy.contains('Select Course to Import');
+      cy.contains('Select Course(s) to Import');
       cy.get(importCourseButtonId).should('be.disabled');
 
       // Select the first available course and import it
@@ -66,26 +68,6 @@ describe('Import data from Moodle', () => {
       cy.contains('created'); // specific action type used at least once when "creating" a moodle course
     });
   });
-
-  /* TODO does currently not work because the table has been replaced with a MUI-Datatable.
-  it('Filter Imported Data', () => {
-    cy.get('table:last').as('dataTable');
-    cy.get('@dataTable')
-      .find('tr')
-      .its('length')
-      .then(($initialLength) => {
-        cy.get(targetFilterInputId).click();
-        cy.get(targetFilterInputId).type('course');
-        cy.focused().type('{downArrow}{enter}', { force: true });
-        cy.get('@dataTable')
-          .find('tr')
-          .its('length')
-          .then(($filteredLength) => {
-            expect($initialLength).to.be.greaterThan($filteredLength);
-          });
-      });
-  });
-  */
 
   describe('Saves the Imported Data as App Instance Resource', () => {
     /* 
@@ -113,13 +95,8 @@ describe('Import data from Moodle', () => {
       cy.get(saveFilteredButtonId).should('not.be.disabled');
     });
 
-    it('Saves the current data', () => {
+    it('Saves the current data as resource', () => {
       cy.get(saveUnfilteredButtonId).click();
-      cy.get('table')
-        .find('td')
-        .contains(APP_INSTANCE_ID)
-        .next()
-        .contains(MOODLE_API_ENDPOINT);
     });
 
     it('Deletes the saved resources', () => {

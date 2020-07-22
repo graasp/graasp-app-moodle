@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/graasp/graasp-app-moodle/compare/v0.1.3...v0.1.4) (2020-07-17)
+
+### [0.1.3](https://github.com/graasp/graasp-app-moodle/compare/v0.1.2...v0.1.3) (2020-07-17)
+
+### Bug Fixes
+
+- environment variable definition '=' not ':' ([e57e6e8](https://github.com/graasp/graasp-app-moodle/commit/e57e6e8dad3e9901f6cfa1a8eb843702ea62f47e))
+- path to encrypted env file ([1a1a168](https://github.com/graasp/graasp-app-moodle/commit/1a1a168efe39b1b70716c715f0ae6fb529e3661d))
+- remove links attr ([e440f27](https://github.com/graasp/graasp-app-moodle/commit/e440f271ea17ddb85370467f2fb8d7f011b63179))
+- update paths and names in docker-compose ([904de4f](https://github.com/graasp/graasp-app-moodle/commit/904de4fc19579e1c21e6153689c28996b7dfc9d2))
+- updated env variable names ([e7753bd](https://github.com/graasp/graasp-app-moodle/commit/e7753bd3a4531ed81288868905e4b313cecb46f8))
+- upgrade node packages ([7c127e3](https://github.com/graasp/graasp-app-moodle/commit/7c127e3a8460ed7d2259d82f746b295ca220a6f6))
+
+### Tests
+
+- define moodle and app url through env ([e966472](https://github.com/graasp/graasp-app-moodle/commit/e966472f1b63ce227a396235c79b157d7606073d))
+- enable all tests again ([2ba1698](https://github.com/graasp/graasp-app-moodle/commit/2ba16985989611f49fb3e2abecd5c33d1fca2d0b))
+- initial setup for codeship ([6bb7db8](https://github.com/graasp/graasp-app-moodle/commit/6bb7db88d7a4683214b45e2d1688d071c39d3186))
+- remove extra browser ([87ea32a](https://github.com/graasp/graasp-app-moodle/commit/87ea32af8ead5b80ac2418e41a6ad6cedb6d4048))
+- remove obsolete code ([751abd8](https://github.com/graasp/graasp-app-moodle/commit/751abd89240c36e4e404eaea91d3dcea393b3a76))
+- remove test that fails in pipeline ([c54d8fd](https://github.com/graasp/graasp-app-moodle/commit/c54d8fdc05296e5b8a12a1b90021fc7ab5e565b7))
+- skip not working tests temporarly ([a408cba](https://github.com/graasp/graasp-app-moodle/commit/a408cbac5ff44a4f118f7978af16c3049735d452))
+
+### Continuous Integration
+
+- add deployments for master and new tags ([d5f2c7b](https://github.com/graasp/graasp-app-moodle/commit/d5f2c7b8ce83a17317a2f8558a3a6e396eac7cc0))
+- add encrypted aws keys for app ([4e3b540](https://github.com/graasp/graasp-app-moodle/commit/4e3b540a7e0e53b6992394bc92f23ab35e66eeb4))
+- add healtchecks and adjust networking ([07c80ff](https://github.com/graasp/graasp-app-moodle/commit/07c80ff5d696e98561b69f74b2a931cf54836d77))
+- add healthckeck to db ([cb8e0e4](https://github.com/graasp/graasp-app-moodle/commit/cb8e0e430e59e8379d8c697a44c302bbbe2ec233))
+- add manual dependency for wait-on ([7d0a1ea](https://github.com/graasp/graasp-app-moodle/commit/7d0a1ea18b2f86289f01aee0813b415fe3fb0719))
+- change app service to domain name ([4a46f25](https://github.com/graasp/graasp-app-moodle/commit/4a46f25ac2ea88e7883a05a4b1a00eb9f735d671))
+- change app url for test ([37b8c17](https://github.com/graasp/graasp-app-moodle/commit/37b8c17d8e6022b5964e5874330f1d53fb7d64db))
+- disable video and update env var in run cmd ([17e778c](https://github.com/graasp/graasp-app-moodle/commit/17e778c8afa25ce23b2c34bbe6e8b08d34eb150c))
+- enable lint and jest unit tests ([8dd86fd](https://github.com/graasp/graasp-app-moodle/commit/8dd86fdb6a7c4e64cebd5c18b2f73d390054304e))
+- increase healthcheck retries and timeout ([fcff2a9](https://github.com/graasp/graasp-app-moodle/commit/fcff2a97e057e3a8553757e4e770b69b984c2988))
+- pre-install node modules and use node-slim ([ab18a3c](https://github.com/graasp/graasp-app-moodle/commit/ab18a3ca575147fcfc9e64809482461b5227b553))
+- remove 'sudo' from dockerfile ([a8fe246](https://github.com/graasp/graasp-app-moodle/commit/a8fe2462134d4dc74161f9f658256daf178717db))
+- remove obsole 'run' par of command ([9667bbb](https://github.com/graasp/graasp-app-moodle/commit/9667bbb61330f4f11140154cfd54a6279dd82548))
+- replace run command ([ff531f1](https://github.com/graasp/graasp-app-moodle/commit/ff531f1632c5d0f1a188a341be3c2fffce36fe6c))
+- run cypress from within app container ([13faede](https://github.com/graasp/graasp-app-moodle/commit/13faede0e99c5b6035f08d811b015355697a180c))
+- security error change domain property ([ca11085](https://github.com/graasp/graasp-app-moodle/commit/ca110851244fe59113efb35c2443f1a365fc80c9))
+- try exposing the graasp apps port ([7a92457](https://github.com/graasp/graasp-app-moodle/commit/7a92457a5abae362268b5610a1c760e50299ed24))
+- try out wait-on and fail ([a41f08b](https://github.com/graasp/graasp-app-moodle/commit/a41f08b56d11b9adfa1d1b6a189eb4b9d38fb0aa))
+- try to run 2 commands on same container ([ec0b4bc](https://github.com/graasp/graasp-app-moodle/commit/ec0b4bc61df56c9001581dec7102bdd05a086ee8))
+- update start command for ci ([396fc5e](https://github.com/graasp/graasp-app-moodle/commit/396fc5e21ff99752b20a724b5eada87c9597164a))
+- use chromium for tests ([9bd18b5](https://github.com/graasp/graasp-app-moodle/commit/9bd18b5bbc9d9e0a4b89212aca6f93a88333c22a))
+- working local version for exec 'yarn try:ssat' ([11607fa](https://github.com/graasp/graasp-app-moodle/commit/11607fad90078b6fc93f21e8430b57937cc699d8))
+
 ### [0.1.2](https://github.com/graasp/graasp-app-moodle/compare/v0.1.1...v0.1.2) (2020-07-13)
 
 ### Features

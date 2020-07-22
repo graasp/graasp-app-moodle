@@ -1,0 +1,75 @@
+data-aggregation-module:
+  build:
+    context: .
+    dockerfile: Dockerfile
+    image: codeship/graasp-app
+  encrypted_env_file: .env.test.encrypted
+  depends_on:
+    - moodle-web-server
+
+app:
+  build:
+    context: .
+    dockerfile: Dockerfile
+    image: codeship/graasp-app
+  encrypted_env_file: .env.test.encrypted
+
+moodle-db:
+  build:
+    context: ./docker-auxilliaries/mariadb-img/
+    image: codeship/moodle-db
+    dockerfile: Dockerfile
+  environment:
+    - MARIADB_USER=bn_moodle
+    - MARIADB_DATABASE=bitnami_moodle
+    - ALLOW_EMPTY_PASSWORD=yes
+
+moodle-web-server:
+  build:
+    context: ./docker-auxilliaries/moodle-img/
+    image: codeship/moodle-web-server
+    dockerfile: Dockerfile
+  environment:
+    - MARIADB_HOST=moodle-db
+    - MARIADB_PORT_NUMBER=3306
+    - MOODLE_DATABASE_USER=bn_moodle
+    - MOODLE_DATABASE_NAME=bitnami_moodle
+    - ALLOW_EMPTY_PASSWORD=yes
+    - MOODLE_USERNAME=user
+    - MOODLE_PASSWORD=bitnami
+    - MOODLE_EMAIL=user@example.com
+    - MOODLE_SKIP_INSTALL=yes
+  depends_on:
+    - moodle-db
+
+build-dev:
+  build: .
+  dockerfile: Dockerfile.build.dev
+  encrypted_env_file: .env.dev.encrypted
+  environment:
+    ENV: production
+  volumes:
+    # have to mount the build directory and not the root so as to avoid conflicts with node_modules
+    - ./build:/usr/src/app/build
+
+build-prod:
+  build: .
+  dockerfile: Dockerfile.build.prod
+  encrypted_env_file: .env.prod.encrypted
+  environment:
+    ENV: production
+  volumes:
+    # have to mount the build directory and not the root so as to avoid conflicts with node_modules
+    - ./build:/usr/src/app/build
+
+aws-dev:
+  image: codeship/aws-deployment
+  encrypted_env_file: .env.dev.encrypted
+  volumes:
+    - .:/deploy
+
+aws-prod:
+  image: codeship/aws-deployment
+  encrypted_env_file: .env.prod.encrypted
+  volumes:
+    - .:/deploy

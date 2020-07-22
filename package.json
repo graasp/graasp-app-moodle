@@ -1,6 +1,6 @@
 {
   "name": "graasp-app-moodle",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "private": true,
   "author": "HEAI-FR",
   "contributors": [
@@ -31,12 +31,16 @@
     "redux": "4.0.5",
     "redux-devtools-extension": "2.13.8",
     "redux-promise": "0.6.0",
-    "redux-thunk": "2.3.0"
+    "redux-thunk": "2.3.0",
+    "start-server-and-test": "1.11.2",
+    "wait-on": "5.1.0"
   },
   "scripts": {
     "start": "npm-run-all --parallel start:local start:api",
     "start:local": "env-cmd -f ./.env.local react-scripts start",
     "start:api": "json-server --watch data/db.json --port 3636 --id _id --routes data/routes.json",
+    "start:ci": "npm-run-all --parallel start:react start:api",
+    "start:react": "react-scripts start",
     "prestart:api": "cat data/default.json > data/db.json",
     "build": "run-s build:react",
     "build:react": "react-scripts build",
@@ -53,10 +57,12 @@
     "test:once": "cross-env CI=true env-cmd -f ./.env.test react-scripts test --env=jsdom",
     "test:coverage": "react-scripts test --env=jsdom --coverage",
     "test:ci": "run-s test:coverage report",
+    "test:integration": "start-server-and-test start:ci http-get://localhost:3000 cy:run",
     "report": "cat ./coverage/lcov.info | codacy-coverage",
     "eject": "react-scripts eject",
     "release": "git fetch --tags && git add CHANGELOG.md && standard-version -a",
-    "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release"
+    "release:first": "git fetch --tags && git add CHANGELOG.md && standard-version -a --first-release",
+    "cy:run": "cypress run --config video=false,screenshotOnRunFailure=false --env APP_URL=http://localhost:3000,MOODLE_URL=http://moodle-web-server"
   },
   "devDependencies": {
     "@commitlint/cli": "9.1.1",
