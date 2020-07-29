@@ -73,8 +73,9 @@ const getAppInstanceResources = async ({
       });
     }
 
-    let url = `//${apiHost +
-      APP_INSTANCE_RESOURCES_ENDPOINT}?appInstanceId=${appInstanceId}`;
+    let url = `//${
+      apiHost + APP_INSTANCE_RESOURCES_ENDPOINT
+    }?appInstanceId=${appInstanceId}`;
 
     // only add userId or sessionId, not both
     if (userId) {
@@ -107,10 +108,12 @@ const getAppInstanceResources = async ({
   }
 };
 
-const postAppInstanceResource = async ({ data, userId, type } = {}) => async (
-  dispatch,
-  getState,
-) => {
+const postAppInstanceResource = async ({
+  data,
+  userId,
+  type,
+  visibility,
+} = {}) => async (dispatch, getState) => {
   dispatch(flagPostingAppInstanceResource(true));
   try {
     const {
@@ -139,6 +142,7 @@ const postAppInstanceResource = async ({ data, userId, type } = {}) => async (
           format: APP_INSTANCE_RESOURCE_FORMAT,
           appInstanceId,
           userId,
+          visibility,
         },
       });
     }
@@ -153,6 +157,7 @@ const postAppInstanceResource = async ({ data, userId, type } = {}) => async (
       // here you can specify who the resource will belong to
       // but applies if the user making the request is an admin
       user: userId,
+      visibility,
     };
 
     const response = await fetch(url, {
@@ -247,7 +252,7 @@ const patchAppInstanceResource = async ({ id, data } = {}) => async (
   }
 };
 
-const deleteAppInstanceResource = async id => async (dispatch, getState) => {
+const deleteAppInstanceResource = async (id) => async (dispatch, getState) => {
   dispatch(flagDeletingAppInstanceResource(true));
   try {
     const { apiHost, offline, standalone } = await getApiContext(getState);
