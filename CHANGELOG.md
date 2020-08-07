@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/graasp/graasp-app-moodle/compare/v0.1.4...v0.1.5) (2020-08-07)
+
+### Features
+
+- add google analytics key ([0df16d2](https://github.com/graasp/graasp-app-moodle/commit/0df16d2d31a2fe9cee4d0baf1b955be3b20985d1))
+
+### Bug Fixes
+
+- store visibility attr on appInstanceResource ([6efa417](https://github.com/graasp/graasp-app-moodle/commit/6efa41732ed40ec3b5e17795fc3e49029513c777))
+
 ### [0.1.4](https://github.com/graasp/graasp-app-moodle/compare/v0.1.3...v0.1.4) (2020-07-17)
 
 ### [0.1.3](https://github.com/graasp/graasp-app-moodle/compare/v0.1.2...v0.1.3) (2020-07-17)
