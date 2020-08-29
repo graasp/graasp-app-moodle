@@ -19,7 +19,7 @@ RUN yarn install --silent
 COPY . .
 
 # expose the port 
-EXPOSE 3000
+EXPOSE 3000 3636
 
 # define when the container is ready
 HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=20  \
