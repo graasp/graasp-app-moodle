@@ -31,6 +31,7 @@ services:
     build: .
     ports:
       - '8000:3000'
+      - '3636:3636'
     # Allows to run the react-app that depends on a interactive terminal in v.3.4.1
     stdin_open: true # docker run -i
     tty: true # docker run -t

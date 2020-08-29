@@ -38,7 +38,7 @@
   "scripts": {
     "start": "npm-run-all --parallel start:local start:api",
     "start:local": "env-cmd -f ./.env.local react-scripts start",
-    "start:api": "json-server --watch data/db.json --port 3636 --id _id --routes data/routes.json",
+    "start:api": "json-server --watch data/db.json --host 0.0.0.0 --port 3636 --id _id --routes data/routes.json",
     "start:ci": "npm-run-all --parallel start:react start:api",
     "start:react": "react-scripts start",
     "prestart:api": "cat data/default.json > data/db.json",
