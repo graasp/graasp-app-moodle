@@ -150,7 +150,7 @@ class Settings extends Component {
       });
     }
 
-    // add trailing / to endpoint
+    // remove trailing / to endpoint
     const endpoint = apiEndpoint.endsWith('/')
       ? apiEndpoint.slice(0, -1)
       : apiEndpoint;
