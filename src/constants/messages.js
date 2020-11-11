@@ -9,3 +9,4 @@ export const MISSING_API_HOST_MESSAGE = 'Missing API host.';
 export const UNEXPECTED_ERROR_MESSAGE = 'An unexpected error has occurred.';
 export const MISSING_APP_INSTANCE_RESOURCE_ID_MESSAGE =
   'No app instance resource id specified.';
+export const UNEXPECTED_ENDPOINT_PROTOCOL_MESSAGE = `The submitted endpoint does not use a secured protocol.`;

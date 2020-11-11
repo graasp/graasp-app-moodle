@@ -20,3 +20,5 @@ export const TEACHER_MODES = ['teacher', 'producer', 'educator', 'admin'];
 
 export const DEFAULT_VISIBILITY = 'private';
 export const PUBLIC_VISIBILITY = 'public';
+
+export const DEFAULT_PROTOCOL = 'https';

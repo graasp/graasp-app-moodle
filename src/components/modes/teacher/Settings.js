@@ -15,6 +15,8 @@ import { withTranslation } from 'react-i18next';
 import { closeSettings, patchAppInstance } from '../../../actions';
 import Loader from '../../common/Loader';
 import MoodleAPIRequests from '../../../APIRequests/MoodleAPIRequests';
+import { DEFAULT_PROTOCOL } from '../../../config/settings';
+import { UNEXPECTED_ENDPOINT_PROTOCOL_MESSAGE } from '../../../constants/messages';
 
 function getModalStyle() {
   const top = 50;
@@ -58,7 +60,6 @@ class Settings extends Component {
     const connectionEstablished = false;
     const password = 'teacher'; // TODO: reset to ''
     // Indicates the user how to proceed or what went wrong to establish a connection
-    const connectionUserHint = 'Establish a connection to proceed';
     const apiRequests = new MoodleAPIRequests();
     const isSendingRequests = false;
     return {
@@ -68,7 +69,7 @@ class Settings extends Component {
       availableCourses,
       selectedCourse,
       connectionEstablished,
-      connectionUserHint,
+      connectionUserHint: '',
       apiRequests,
       isSendingRequests,
     };
@@ -141,33 +142,45 @@ class Settings extends Component {
     const { t } = this.props;
     const { apiEndpoint, username, password, apiRequests } = this.state;
 
+    // apiEndpoint must be https
+    if (!apiEndpoint.startsWith(DEFAULT_PROTOCOL)) {
+      return this.setState({
+        connectionUserHint: t(UNEXPECTED_ENDPOINT_PROTOCOL_MESSAGE),
+        connectionEstablished: false,
+      });
+    }
+
+    // add trailing / to endpoint
+    const endpoint = apiEndpoint.endsWith('/')
+      ? apiEndpoint.slice(0, -1)
+      : apiEndpoint;
+
     this.setState({ isSendingRequests: true });
 
     const requestSucceeded = await apiRequests.getToken(
-      apiEndpoint,
+      endpoint,
       username,
       password,
     );
-    if (requestSucceeded) {
-      const availableCourses = await apiRequests.getAvailableCourses();
 
-      this.setState({ isSendingRequests: false });
+    this.setState({ isSendingRequests: false });
 
-      if (availableCourses) {
-        this.setState({
-          connectionEstablished: true,
-          availableCourses,
-          connectionUserHint: '', // reset the hint
-        });
-      }
-    } else {
-      this.setState({
+    if (!requestSucceeded) {
+      return this.setState({
         connectionUserHint: t(
           'Problem establishing the connection, maybe a wrong configuration in LMS or a typo in the API endpoint?',
         ),
         connectionEstablished: false,
       });
     }
+
+    const availableCourses = (await apiRequests.getAvailableCourses()) || [];
+
+    return this.setState({
+      connectionEstablished: true,
+      availableCourses,
+      connectionUserHint: '', // reset the hint
+    });
   };
 
   /**
@@ -292,10 +305,16 @@ class Settings extends Component {
    * Render hints for the user if there is one
    */
   renderConnectionHints() {
-    const { connectionUserHint } = this.state;
+    const { connectionUserHint, connectionEstablished } = this.state;
+    const { t } = this.props;
     if (connectionUserHint.length > 0) {
       return <p>{connectionUserHint}</p>;
     }
+
+    if (!connectionEstablished) {
+      return <p>{t('Establish a connection to proceed')}</p>;
+    }
+
     return null; // to prevent eslint consistent-return error
   }
 
@@ -318,7 +337,7 @@ class Settings extends Component {
       <>
         <Typography variant="caption" color="inherit">
           {t(
-            'The Moodle instance your connecting to must be configured correctly.',
+            'The Moodle instance you are connecting to must be configured correctly. ',
           )}
           <a href="https://gitlab.forge.hefr.ch/uchendu.nwachukw/wafed_moodle_webservice_plugin">
             {t('Follow this guide for more information')}
@@ -327,7 +346,7 @@ class Settings extends Component {
 
         <TextField
           id="apiEndpoint"
-          label={t('LMS Base URL (without trailing "/" at the end)')}
+          label={t('LMS Base URL')}
           value={apiEndpoint}
           onChange={this.handleApiEndpointChange}
           className={classes.textField}

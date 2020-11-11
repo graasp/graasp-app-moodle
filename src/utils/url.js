@@ -16,5 +16,5 @@ export const addQueryParamsToUrl = (obj) => {
  * @returns {string} url with unencoded query params
  */
 export const buildUrlWithQueryParams = (url, params) => {
-  return `${url}?${Qs.stringify(params, { encode: false })}`;
+  return `${url}?${Qs.stringify(params, { encode: true })}`;
 };

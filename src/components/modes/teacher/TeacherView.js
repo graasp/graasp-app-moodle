@@ -119,13 +119,92 @@ export class TeacherView extends Component {
     },
   });
 
-  state = {
-    data: [],
-    dataSource: '',
-    availableColumns: [],
-    selectedColumns: [],
-    filters: {},
-  };
+  // text labels for table
+  textLabels = (() => {
+    const { t } = this.props;
+    return {
+      body: {
+        noMatch: t('Sorry, no matching records found'),
+        toolTip: t('Sort'),
+        columnHeaderTooltip: (column) => `${t(`Sort for`)} ${column.label}`,
+      },
+      pagination: {
+        next: t('Next Page'),
+        previous: t('Previous Page'),
+        rowsPerPage: `${t('Rows per page')}:`,
+        displayRows: t('of'),
+      },
+      toolbar: {
+        search: t('Search'),
+        downloadCsv: t('Download CSV'),
+        print: t('Print'),
+        viewColumns: t('View Columns'),
+        filterTable: t('Filter Table'),
+      },
+      filter: {
+        all: t('All'),
+        title: t('FILTERS'),
+        reset: t('RESET'),
+      },
+      viewColumns: {
+        title: t('Show Columns'),
+        titleAria: t('Show/Hide Table Columns'),
+      },
+      selectedRows: {
+        text: t('row(s) selected'),
+        delete: t('Delete'),
+        deleteAria: t('Delete Selected Rows'),
+      },
+    };
+  })();
+
+  state = (() => {
+    const { t } = this.props;
+
+    const textLabels = {
+      body: {
+        noMatch: t('Sorry, no matching records found'),
+        toolTip: t('Sort'),
+        columnHeaderTooltip: (column) => `${t(`Sort for`)} ${column.label}`,
+      },
+      pagination: {
+        next: t('Next Page'),
+        previous: t('Previous Page'),
+        rowsPerPage: `${t('Rows per page')}:`,
+        displayRows: t('of'),
+      },
+      toolbar: {
+        search: t('Search'),
+        downloadCsv: t('Download CSV'),
+        print: t('Print'),
+        viewColumns: t('View Columns'),
+        filterTable: t('Filter Table'),
+      },
+      filter: {
+        all: t('All'),
+        title: t('FILTERS'),
+        reset: t('RESET'),
+      },
+      viewColumns: {
+        title: t('Show Columns'),
+        titleAria: t('Show/Hide Table Columns'),
+      },
+      selectedRows: {
+        text: t('row(s) selected'),
+        delete: t('Delete'),
+        deleteAria: t('Delete Selected Rows'),
+      },
+    };
+
+    return {
+      data: [],
+      dataSource: '',
+      availableColumns: [],
+      selectedColumns: [],
+      filters: {},
+      textLabels,
+    };
+  })();
 
   constructor(props) {
     super(props);
@@ -357,6 +436,43 @@ export class TeacherView extends Component {
    */
   renderImportedDataTable() {
     const { data, selectedColumns } = this.state;
+    const { t } = this.props;
+
+    const textLabels = {
+      body: {
+        noMatch: t('Sorry, no matching records found'),
+        toolTip: t('Sort'),
+        columnHeaderTooltip: (column) => `${t(`Sort for`)} ${column.label}`,
+      },
+      pagination: {
+        next: t('Next Page'),
+        previous: t('Previous Page'),
+        rowsPerPage: `${t('Rows per page')}:`,
+        displayRows: t('of'),
+      },
+      toolbar: {
+        search: t('Search'),
+        downloadCsv: t('Download CSV'),
+        print: t('Print'),
+        viewColumns: t('View Columns'),
+        filterTable: t('Filter Table'),
+      },
+      filter: {
+        all: t('All'),
+        title: t('FILTERS'),
+        reset: t('RESET'),
+      },
+      viewColumns: {
+        title: t('Show Columns'),
+        titleAria: t('Show/Hide Table Columns'),
+      },
+      selectedRows: {
+        text: t('row(s) selected'),
+        delete: t('Delete'),
+        deleteAria: t('Delete Selected Rows'),
+      },
+    };
+
     // reset default options
     const options = {
       filter: false,
@@ -366,6 +482,7 @@ export class TeacherView extends Component {
       print: false,
       viewColumns: false,
       selectableRows: 'none',
+      textLabels,
     };
     // put data in same order as headers
     const filteredData = data ? this.filterRows(data) : []; // prevent of passing undefined to filterRows
