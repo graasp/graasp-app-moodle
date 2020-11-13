@@ -143,7 +143,11 @@ class Settings extends Component {
     const { apiEndpoint, username, password, apiRequests } = this.state;
 
     // apiEndpoint must be https
-    if (!apiEndpoint.startsWith(DEFAULT_PROTOCOL)) {
+    console.log(process.env.NODE_ENV);
+    if (
+      !apiEndpoint.startsWith(DEFAULT_PROTOCOL) &&
+      !['development', 'test'].includes(process.env.NODE_ENV)
+    ) {
       return this.setState({
         connectionUserHint: t(UNEXPECTED_ENDPOINT_PROTOCOL_MESSAGE),
         connectionEstablished: false,
