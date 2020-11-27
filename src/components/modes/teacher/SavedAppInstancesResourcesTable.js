@@ -14,6 +14,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
+import VisualizationButton from './VisualizationButton';
 import { deleteAppInstanceResource } from '../../../actions';
 import { getUsers } from '../../../actions/users';
 
@@ -104,6 +105,7 @@ export class SavedAppInstancesResourcesTable extends Component {
           >
             <DeleteIcon />
           </IconButton>
+          <VisualizationButton id={_id} />
         </TableCell>
       </TableRow>
     ));
