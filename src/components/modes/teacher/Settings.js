@@ -143,6 +143,7 @@ class Settings extends Component {
     const { apiEndpoint, username, password, apiRequests } = this.state;
 
     // apiEndpoint must be https
+    // eslint-disable-next-line no-console
     console.log(process.env.NODE_ENV);
     if (
       !apiEndpoint.startsWith(DEFAULT_PROTOCOL) &&
