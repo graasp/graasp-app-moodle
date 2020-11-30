@@ -39,6 +39,7 @@ export default function register() {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
+          // eslint-disable-next-line no-console
           console.log(
             'This web app is being served cache-first by a service ' +
               'worker. To learn more, visit https://goo.gl/SC7cgQ',
@@ -55,7 +56,7 @@ export default function register() {
 function registerValidSW(swUrl) {
   navigator.serviceWorker
     .register(swUrl)
-    .then(registration => {
+    .then((registration) => {
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         installingWorker.onstatechange = () => {
@@ -65,18 +66,21 @@ function registerValidSW(swUrl) {
               // the fresh content will have been added to the cache.
               // It's the perfect time to display a "New content is
               // available; please refresh." message in your web app.
+              // eslint-disable-next-line no-console
               console.log('New content is available; please refresh.');
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
               // "Content is cached for offline use." message.
+              // eslint-disable-next-line no-console
               console.log('Content is cached for offline use.');
             }
           }
         };
       };
     })
-    .catch(error => {
+    .catch((error) => {
+      // eslint-disable-next-line no-console
       console.error('Error during service worker registration:', error);
     });
 }
@@ -84,14 +88,14 @@ function registerValidSW(swUrl) {
 function checkValidServiceWorker(swUrl) {
   // Check if the service worker can be found. If it can't reload the page.
   fetch(swUrl)
-    .then(response => {
+    .then((response) => {
       // Ensure service worker exists, and that we really are getting a JS file.
       if (
         response.status === 404 ||
         response.headers.get('content-type').indexOf('javascript') === -1
       ) {
         // No service worker found. Probably a different app. Reload the page.
-        navigator.serviceWorker.ready.then(registration => {
+        navigator.serviceWorker.ready.then((registration) => {
           registration.unregister().then(() => {
             window.location.reload();
           });
@@ -102,6 +106,7 @@ function checkValidServiceWorker(swUrl) {
       }
     })
     .catch(() => {
+      // eslint-disable-next-line no-console
       console.log(
         'No internet connection found. App is running in offline mode.',
       );
@@ -110,7 +115,7 @@ function checkValidServiceWorker(swUrl) {
 
 export function unregister() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(registration => {
+    navigator.serviceWorker.ready.then((registration) => {
       registration.unregister();
     });
   }

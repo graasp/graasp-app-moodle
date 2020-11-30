@@ -12,6 +12,9 @@ describe('<App />', () => {
     dispatchGetContext: jest.fn(),
     dispatchGetAppInstance: jest.fn(),
     dispatchGetAppInstanceResources: jest.fn(),
+    headerVisible: true,
+    ready: true,
+    standalone: true,
   };
   // eslint-disable-next-line react/jsx-props-no-spreading
   const component = shallow(<App {...props} />);

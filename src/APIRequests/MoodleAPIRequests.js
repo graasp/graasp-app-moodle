@@ -35,6 +35,7 @@ class MoodleAPIRequests extends APIRequests {
         return false;
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error:', error);
         return false;
       });
@@ -58,6 +59,7 @@ class MoodleAPIRequests extends APIRequests {
         return res;
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error:', error);
         return false;
       });
@@ -84,6 +86,7 @@ class MoodleAPIRequests extends APIRequests {
         return { sourceUrl, data };
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error:', error);
         return false;
       });
