@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/graasp/graasp-app-moodle/compare/v0.1.5...v0.2.0) (2020-11-30)
+
+### Features
+
+- add visualization quick actions ([492d236](https://github.com/graasp/graasp-app-moodle/commit/492d2369a8a3c3b0c455991071d9bb1a34cd42d4))
+- disable no-console errors ([70ee910](https://github.com/graasp/graasp-app-moodle/commit/70ee9109b657df29e87047520bb292e2f1a80a66))
+
+### Bug Fixes
+
+- expose the fake-api in docker environment ([f2fc2c5](https://github.com/graasp/graasp-app-moodle/commit/f2fc2c5d0709e45ba7b81f6fca17c9736e4aa783))
+- force https connection, automatic trailing slash, catch error ([c32031d](https://github.com/graasp/graasp-app-moodle/commit/c32031d5657e25ffe805afa51a1bfe907a17a7c1))
+
+### Build System
+
+- reset aes and ssh key ([dbe7d3a](https://github.com/graasp/graasp-app-moodle/commit/dbe7d3a61d193336295d202e721a1d7c9864c15a))
+- update encrypted env variables ([156ff6a](https://github.com/graasp/graasp-app-moodle/commit/156ff6a531ef51861dc8c48efe2d6323a096b3fb))
+
 ### [0.1.5](https://github.com/graasp/graasp-app-moodle/compare/v0.1.4...v0.1.5) (2020-08-07)
 
 ### Features
