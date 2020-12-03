@@ -19,8 +19,8 @@ import {
   postAppInstanceResource,
   deleteAppInstanceResource,
   openSettings,
+  getUsers,
 } from '../../../actions';
-import { getUsers } from '../../../actions/users';
 import Settings from './Settings';
 import { PUBLIC_VISIBILITY } from '../../../config/settings';
 
@@ -245,7 +245,7 @@ export class TeacherView extends Component {
     data.forEach((entry) => {
       // Convert timecreated to readable datetime string
       if (entry.timecreated) {
-        entry.timecreated = new Date(entry.timecreated * 1000).toISOString()(); // eslint-disable-line no-param-reassign
+        entry.timecreated = new Date(entry.timecreated * 1000).toISOString(); // eslint-disable-line no-param-reassign
       }
       // Add all values to the list of possible values for this column
       availableColumns.forEach((column) => {
