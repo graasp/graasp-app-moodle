@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
+import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import SaveIcon from '@material-ui/icons/Save';
@@ -58,8 +59,8 @@ class Settings extends Component {
     const availableCourses = [];
     const selectedCourse = [];
     const connectionEstablished = false;
-    const password = 'teacher'; // TODO: reset to ''
-    // Indicates the user how to proceed or what went wrong to establish a connection
+    const password = '';
+    // indicates the user how to proceed or what went wrong to establish a connection
     const apiRequests = new MoodleAPIRequests();
     const isSendingRequests = false;
     return {
@@ -143,8 +144,6 @@ class Settings extends Component {
     const { apiEndpoint, username, password, apiRequests } = this.state;
 
     // apiEndpoint must be https
-    // eslint-disable-next-line no-console
-    console.log(process.env.NODE_ENV);
     if (
       !apiEndpoint.startsWith(DEFAULT_PROTOCOL) &&
       !['development', 'test'].includes(process.env.NODE_ENV)
@@ -265,7 +264,9 @@ class Settings extends Component {
         );
       }
       return (
-        <p>{t('Sorry, there are no courses available for you to import')}</p>
+        <Alert severity="warning">
+          {t('Sorry, there are no courses available for you to import')}
+        </Alert>
       );
     }
     return ''; // to prevent eslint consistent-return error
@@ -313,11 +314,13 @@ class Settings extends Component {
     const { connectionUserHint, connectionEstablished } = this.state;
     const { t } = this.props;
     if (connectionUserHint.length > 0) {
-      return <p>{connectionUserHint}</p>;
+      return <Alert severity="error">{connectionUserHint}</Alert>;
     }
 
     if (!connectionEstablished) {
-      return <p>{t('Establish a connection to proceed')}</p>;
+      return (
+        <Alert severity="info">{t('Establish a connection to proceed')}</Alert>
+      );
     }
 
     return null; // to prevent eslint consistent-return error
