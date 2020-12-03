@@ -15,8 +15,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import VisualizationButton from './VisualizationButton';
-import { deleteAppInstanceResource } from '../../../actions';
-import { getUsers } from '../../../actions/users';
+import { deleteAppInstanceResource, getUsers } from '../../../actions';
 
 export class SavedAppInstancesResourcesTable extends Component {
   static propTypes = {
@@ -71,9 +70,7 @@ export class SavedAppInstancesResourcesTable extends Component {
 
   /**
    * helper method to render the rows of the app instance resource table
-   * @param appInstanceResources
-   * @param dispatchDeleteAppInstanceResource
-   * @returns {*}
+   * @returns {JSX.Element|*}
    */
   renderAppInstanceResources = () => {
     const {
@@ -90,10 +87,8 @@ export class SavedAppInstancesResourcesTable extends Component {
       );
     }
     // map each app instance resource to a row in the table
-    return appInstanceResources.map(({ _id, appInstance, data }) => (
+    return appInstanceResources.map(({ _id, data }) => (
       <TableRow key={_id}>
-        <TableCell scope="row">{_id}</TableCell>
-        <TableCell>{appInstance}</TableCell>
         <TableCell>{data.source}</TableCell>
         <TableCell>{data.importedData.length}</TableCell>
         <TableCell>{data.filtered ? <CheckIcon /> : <ClearIcon />}</TableCell>
@@ -132,8 +127,6 @@ export class SavedAppInstancesResourcesTable extends Component {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <TableCell>{t('ID')}</TableCell>
-                <TableCell>{t('App Instance')}</TableCell>
                 <TableCell>{t('Source')}</TableCell>
                 <TableCell>{t('Data Entries')}</TableCell>
                 <TableCell>{t('Filtered')}</TableCell>

@@ -8,7 +8,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { ReactComponent as Logo } from '../../resources/logo.svg';
 import './Header.css';
-import { addQueryParamsToUrl } from '../../utils/url';
 
 class Header extends Component {
   static propTypes = {
@@ -17,8 +16,6 @@ class Header extends Component {
       logo: PropTypes.string,
       grow: PropTypes.string,
     }).isRequired,
-    appInstanceId: PropTypes.string,
-    spaceId: PropTypes.string,
   };
 
   static styles = (theme) => ({
@@ -34,42 +31,7 @@ class Header extends Component {
     },
   });
 
-  static defaultProps = {
-    appInstanceId: null,
-    spaceId: null,
-  };
-
-  renderAppInstanceLink = () => {
-    const { appInstanceId, t } = this.props;
-    if (!appInstanceId) {
-      return (
-        <a
-          href={addQueryParamsToUrl({
-            appInstanceId: '6156e70ab253020033364411',
-          })}
-          className="HeaderLink"
-        >
-          {t('Use Sample App Instance')}
-        </a>
-      );
-    }
-    return <div />;
-  };
-
-  renderSpaceLink = () => {
-    const { spaceId, t } = this.props;
-    if (!spaceId) {
-      return (
-        <a
-          href={addQueryParamsToUrl({ spaceId: '5b56e70ab253020033364411' })}
-          className="HeaderLink"
-        >
-          {t('Use Sample Space')}
-        </a>
-      );
-    }
-    return <div />;
-  };
+  static defaultProps = {};
 
   render() {
     const { t, classes } = this.props;
@@ -79,10 +41,8 @@ class Header extends Component {
           <Toolbar>
             <Logo className={classes.logo} />
             <Typography variant="h6" color="inherit" className={classes.grow}>
-              {t('Moodle')}
+              {t('Moodle Data Connector')}
             </Typography>
-            {this.renderSpaceLink()}
-            {this.renderAppInstanceLink()}
           </Toolbar>
         </AppBar>
       </header>
