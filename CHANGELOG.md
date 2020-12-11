@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/graasp/graasp-app-moodle/compare/v0.2.0...v0.2.1) (2020-12-11)
+
+### Bug Fixes
+
+- do not prefill password ([6c7525b](https://github.com/graasp/graasp-app-moodle/commit/6c7525b59493da2dafe1c97044eea3c29e336a0e)), closes [#26](https://github.com/graasp/graasp-app-moodle/issues/26)
+- fix typo in time conversion ([6f35860](https://github.com/graasp/graasp-app-moodle/commit/6f35860e246a8388e484e0cd1df5b7dd975bffd7)), closes [#29](https://github.com/graasp/graasp-app-moodle/issues/29)
+- remove app instance and id from table ([833d163](https://github.com/graasp/graasp-app-moodle/commit/833d1634f20a4eb3fd22eaa85b0b6b897174db42)), closes [#25](https://github.com/graasp/graasp-app-moodle/issues/25)
+
 ## [0.2.0](https://github.com/graasp/graasp-app-moodle/compare/v0.1.5...v0.2.0) (2020-11-30)
 
 ### Features
